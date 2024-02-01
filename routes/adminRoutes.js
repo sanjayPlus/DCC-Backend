@@ -156,7 +156,7 @@ const eventStorage = multer.diskStorage({
 
 
 router.post('/login',adminController.adminLogin);
- //router.post('/register',adminController.adminRegister);
+ router.post('/register',adminController.adminRegister);
 router.get('/user/:id',adminAuth,adminController.getUser);
 router.get('/users',adminAuth,adminController.getAllUsers);    
 router.get("/calendar-events/:date",adminController.getCalendarEvents)
