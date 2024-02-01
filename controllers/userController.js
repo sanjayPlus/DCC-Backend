@@ -52,8 +52,7 @@ const register = async (req, res) => {
       !date_of_birth ||
       !district ||
       !constituency ||
-      !assembly ||
-      !union
+      !assembly
     ) {
       return res
         .status(400)
@@ -89,7 +88,7 @@ const register = async (req, res) => {
       constituency,
       assembly,
       panchayath:panchayath || "",
-      union,
+      union:union || "",
       corporation:corporation ||  "",
       municipality:municipality  || ""
     });
