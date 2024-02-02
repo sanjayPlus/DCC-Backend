@@ -48,7 +48,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/payment', paymentRoutes);
 
 app.get("/",(req,res)=>{
-  res.send("hello to dcc api you are not allowed to access");
+  res.send("hello to sadbhavan api you are not allowed to access");
 })
 
 
