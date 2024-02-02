@@ -729,7 +729,7 @@ const autoLogin = async (req, res) => {
         }),
       }
     );
-
+      console.log(response)
     if (!response.ok) {
       throw new Error("Failed to fetch data from STORE_URL");
     }
@@ -742,6 +742,7 @@ const autoLogin = async (req, res) => {
     // Return the URL and token from the response
     res.status(200).json({ url: data.url, token: data.token });
   } catch (error) {
+    console.log(error);
     console.error("Error during autoLogin:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
