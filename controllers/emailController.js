@@ -26,7 +26,7 @@ oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 //     });
 
 //     const mailOptions = {
-//       from:`DCC Thrissur <${process.env.SMAIL}>`, // Sender address
+//       from:`SADBHAVAN  <${process.env.SMAIL}>`, // Sender address
 //       to, // Recipient
 //       subject,
 //       text,
@@ -86,7 +86,7 @@ async function sendMail(to, subject, text, html) {
     });
 
     const mailOptions = {
-      from: `DCC Thrissur <${process.env.EMAIL}>`,
+      from: `SADBHAVAN <${process.env.EMAIL}>`,
       to,
       subject,
       text,

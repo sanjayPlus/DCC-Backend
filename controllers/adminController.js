@@ -194,7 +194,7 @@ const addCalendarEvent = async (req, res) => {
         date,
         title,
         description,
-        image: `${process.env.DOMAIN}/calendarImage/${imageObj.filename}` ||  "https://dccthrissur.com/webimg/chaticon.png",
+        image: `${process.env.DOMAIN}/calendarImage/${imageObj.filename}` ||  "https://sadbhavan.com/webimg/chaticon.png",
         })
         res.status(201).json(calendar);
 
@@ -955,7 +955,6 @@ const getDistrictV4 = async (req,res)=>{
                              }else{
                                 return res.status(400).json({message:"Local not found"})
                              }
-                    
                     } else {
                         return res.status(404).json({ error: "Assembly not found within the constituency" });
                     }
@@ -1357,7 +1356,7 @@ async function sendNotificationsToAllDevices(req, res) {
             registration_ids: allTokens,
             notification: {
                 body: title,
-                title: "DCC APP",
+                title: "SADHAVANA APP",
             },
             data: {
                 url: url,
