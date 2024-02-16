@@ -3,11 +3,11 @@
 const mongoose = require('mongoose');
 
 const videoGallerySchema = new mongoose.Schema({
-    name: {
+    title: {
         type: String,
       
     },
-    description:{
+    url:{
         type:String,
     },
     video: {
