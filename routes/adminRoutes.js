@@ -168,12 +168,11 @@ const eventStorage = multer.diskStorage({
     },
   });
   
-  // Configure storage engine instead of dest object.
-  const videoGallery = multer({
-    storage: videoStorage,
-  });
-
-
+// Configure storage engine with increased file size limit.
+const videoGallery = multer({
+  storage: videoStorage,
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
+});
 router.post('/login',adminController.adminLogin);
  router.post('/register',adminController.adminRegister);
 router.get('/user/:id',adminAuth,adminController.getUser);
