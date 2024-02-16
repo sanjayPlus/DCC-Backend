@@ -37,7 +37,7 @@ mongoose.connect(MONGODB_URI)
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: '50mb', extended: false, parameterLimit: 50000 }));
 app.use(express.static(path.join(__dirname, "public")))
 // Initialize Passport and use sessions to persist login state
 // app.use(passport.initialize());
