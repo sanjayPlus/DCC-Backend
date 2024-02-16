@@ -18,6 +18,7 @@ const admin = require("firebase-admin");
 const serviceAccount = require("../firebase/firebase");
 const Notification = require("../models/Notification");
 const NotificationList = require("../models/NotificationList");
+const VideoGallery = require("../models/VideoGallery");
 
 const adminLogin = async (req, res) => {
     try {
@@ -1431,6 +1432,44 @@ const deleteNotification = async (req, res) => {
     }
 }
 
+const AddVideogallery = async (req, res) => {
+    try {
+        const { title, url } = req.body;
+        const videoObj = req.file;
+        const newVideo = await VideoGallery.create({
+            title: title,
+            url: url,
+            video: `${process.env.DOMAIN}/videoGallery/${videoObj.filename}`,
+        })
+            res.status(200).json(newVideo);
+    } catch (error) {
+        console.error("Error deleting notification:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const getVideogallery = async (req, res) => {
+    try {
+        const videos = await VideoGallery.find();
+        res.status(200).json(videos);
+    } catch (error) {
+        console.error("Error deleting notification:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const deleteVideogallery = async (req, res) => {
+    try {
+        const video = await VideoGallery.findOneAndDelete({_id:req.params.id});
+        if (!video) {
+        return res.status(404).json({ error: "Video not found" });
+        }
+        res.status(200).json({ msg: "Video removed" });
+    } catch (error) {
+        console.error("Error deleting video:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
 module.exports = {
     adminLogin,
     adminRegister,
@@ -1483,5 +1522,8 @@ module.exports = {
     deleteMunicipality,
     sendNotificationsToAllDevices,
     getNotifications,
-    deleteNotification
+    deleteNotification,
+    AddVideogallery,
+    getVideogallery,
+    deleteVideogallery
 }

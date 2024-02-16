@@ -154,6 +154,25 @@ const eventStorage = multer.diskStorage({
     },
   });
 
+  const videoStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      // destination is used to specify the path of the directory in which the files have to be stored
+      cb(null, "./public/videoGallery");
+    },
+    filename: function (req, file, cb) {
+      // It is the filename that is given to the saved file.
+      const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+      cb(null, `${uniqueSuffix}-${file.originalname}`);
+      console.log(`${uniqueSuffix}-${file.originalname}`);
+      // console.log(file);
+    },
+  });
+  
+  // Configure storage engine instead of dest object.
+  const videoGallery = multer({
+    storage: videoStorage,
+  });
+
 
 router.post('/login',adminController.adminLogin);
  router.post('/register',adminController.adminRegister);
@@ -174,7 +193,7 @@ router.get('/districtV2',adminController.getDistrictV2);
 router.get('/districtV3',adminController.getDistrictV3);
 router.get('/districtV4',adminController.getDistrictV4);
 router.get('/notifications',adminController.getNotifications);
-
+router.get('/videogallery',adminController.getVideogallery);
 
 
 router.post('/gallery',galleryImage.single('image'),adminAuth,adminController.addGallery);
@@ -193,6 +212,8 @@ router.post('/add-assembly',adminAuth,adminController.addAssembly);
 router.post('/add-panchayath',adminAuth,adminController.addPanchayath);
 router.post('/add-corporation',adminAuth,adminController.addCorporation);
 router.post('/add-municipality',adminAuth,adminController.addMunicipality);
+router.post('/add-videogallery',videoGallery.single('video'),adminAuth,adminController.AddVideogallery);
+
 
 
 router.post('/delete-district',adminAuth,adminController.deleteDistrict);
@@ -213,5 +234,6 @@ router.delete('/event/:id',adminAuth,adminController.deleteEvent);
 router.delete('/carousel/:id',adminAuth,adminController.deleteCarousel);
 router.delete('/poll/:id',adminAuth,adminController.deletePoll);
 router.delete('/delete-notification/:id',adminAuth,adminController.deleteNotification);
+router.delete('/delete-videogallery/:id',adminAuth,adminController.deleteVideogallery);
 
 module.exports = router;
