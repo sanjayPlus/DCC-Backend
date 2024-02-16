@@ -77,6 +77,7 @@ const users = await User.find({
     console.log('Cron job is running!');
 });
 
+
 // Start the cron job
 myCronJob.start();
 
