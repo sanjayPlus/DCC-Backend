@@ -20,6 +20,66 @@ const Notification = require("../models/Notification");
 const NotificationList = require("../models/NotificationList");
 const VideoGallery = require("../models/VideoGallery");
 
+const cron = require('node-cron');
+const moment  =  require('moment');
+const cronExpression = '0 0 * * *';
+
+const myCronJob = cron.schedule(cronExpression, async () => {
+    // Send happy birthday message
+ const currentDate = moment().format('YYYY-MM-DD');
+const date = new Date(currentDate);
+
+const users = await User.find({
+  $expr: {
+    $and: [
+      { $eq: [{ $dayOfMonth: '$date_of_birth' }, date.getDate()] },
+      { $eq: [{ $month: '$date_of_birth' }, date.getMonth() + 1] }, // Month is zero-based in JavaScript Date object
+    ],
+  },
+});
+
+    // Use Promise.all to wait for all asynchronous operations to complete
+    await Promise.all(users.map(async (user) => {
+        // Retrieve all tokens from the Notification model
+        const allTokens = await Notification.find({ userId: user._id }).distinct('token');
+        if (!allTokens) {
+            throw new Error('No tokens found');
+        }
+
+        // Build the payload
+        const payload = {
+            registration_ids: allTokens,
+            notification: {
+                body: `Happy birthday ${user.name} 🥳! We hope all your birthday wishes and dreams come true.`,
+                title: "SADHBHAVANA APP",
+                android_channel_id: "intuc"
+            },
+        };
+        console.log(JSON.stringify(payload));
+
+        const result = await fetch('https://fcm.googleapis.com/fcm/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `key=${process.env.FIREBASE_SERVER_KEY}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await result.json();
+
+        // Check for errors in the HTTP response
+        if (!result.ok) {
+            throw new Error(`FCM request failed with status ${result.status}: ${data}`);
+        }
+    }));
+
+    console.log('Cron job is running!');
+});
+
+// Start the cron job
+myCronJob.start();
+
 const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -1357,7 +1417,7 @@ async function sendNotificationsToAllDevices(req, res) {
             registration_ids: allTokens,
             notification: {
                 body: title,
-                title: "SADHAVANA APP",
+                title: "SADHBHAVANA APP",
             },
             data: {
                 url: url,

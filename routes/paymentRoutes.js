@@ -181,7 +181,7 @@ router.get(
         <p style="font-size:0.9em;">Regards,<br>SADBHAVAN APP</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-          <p>SADBHAVAN APP</p>
+          <p>SADHBHAVANA APP</p>
         </div>
       </div>
     </div>`
@@ -295,7 +295,7 @@ router.post(
         <p style="font-size:0.9em;">Regards,<br />SADBHAVAN APP</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-          <p>SADBHAVAN APP</p>
+          <p>SADHBHAVANA APP</p>
         </div>
       </div>
     </div>`
