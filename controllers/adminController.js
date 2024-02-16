@@ -52,7 +52,7 @@ const users = await User.find({
             notification: {
                 body: `Happy birthday ${user.name} 🥳! We hope all your birthday wishes and dreams come true.`,
                 title: "SADHBHAVANA APP",
-                android_channel_id: "intuc"
+                android_channel_id: "SADHBHAVANA",
             },
         };
         console.log(JSON.stringify(payload));
