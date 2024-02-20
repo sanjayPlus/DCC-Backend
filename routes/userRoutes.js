@@ -46,10 +46,31 @@ const CardStorage = multer.diskStorage({
       fileSize: 20 * 1024 * 1024, // 20MB in bytes
     },
   });
+//aadhaar 
 
-//get
-
-router.get('/protected', userAuth, userController.protected);
+  // Configure storage engine instead of dest object.
+  const aadhaarStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      // destination is used to specify the path of the directory in which the files have to be stored
+      cb(null, "./public/aadhaarImage");
+    },
+    filename: function (req, file, cb) {
+      // It is the filename that is given to the saved file.
+      const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+      cb(null, `${uniqueSuffix}-${file.originalname}`);
+      console.log(`${uniqueSuffix}-${file.originalname}`);
+      // console.log(file);
+    },
+  });
+  const aadhaarImage = multer({
+    storage: aadhaarStorage,
+    limits: {
+      fileSize: 20 * 1024 * 1024, // 20MB in bytes
+    },
+  });
+  //get
+  
+  router.get('/protected', userAuth, userController.protected);
 router.get('/details', userAuth, userController.details);
 router.get('/gallery', userController.getGallery);
 router.get('/auto-login',userAuth,userController.autoLogin);
@@ -74,6 +95,7 @@ router.post('/add-vote',userAuth,userController.addVote);
 router.post('/profile-image',ProfileImage.single('profileImage'),userAuth,userController.updateProfileImage);
 router.post('/apple-login',userController.appleLogin);  
 router.post('/add-notification-token',userAuth,userController.storeNotificationToken);
+router.post('/apply-as-volunteer',aadhaarImage.single('aadhaarImage'),userAuth,userController.registerAsVolunteer);
 //update
 router.put('/update', userAuth, userController.update);
 

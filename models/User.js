@@ -85,7 +85,26 @@ const userSchema = new mongoose.Schema({
     date:String,
     merchantId:String,
     merchantTransactionId:String,
-  }]
+  }],
+  volunteer:{
+    name:String,
+   phone:String,
+   email:String,
+   boothNo:String,
+   aadhaar:String,
+    wardNo:String,
+    aadhaarNo:String,
+    madalamPresident:String,
+    address:String,
+    applied:{
+      type:Boolean,
+      default:false
+    },
+    status:{
+      type:Boolean,
+      default:false
+    }
+  }
 });
 
 // Virtual for age calculation based on date_of_birth

@@ -895,7 +895,41 @@ const getPaymentDetailsWithDay = async (req, res) => {
   }
 };
 
+const registerAsVolunteer = async (req, res) => {
+  try {
+   const  {wardNo,boothNo,aadhaarNo,madalamPresident,address} = req.body;
 
+    if(!wardNo || !boothNo || !aadhaarNo || !madalamPresident){
+      return res.status(400).json({ error: "Please provide all required fields." });
+    }
+    const imageObj = req.file;
+    if(!imageObj){
+      return res.status(400).json({ error: "Please provide image" });
+    }
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    //if details added
+    user.volunteer = {
+      wardNo,
+      boothNo,
+      aadhaarNo,
+      madalamPresident,
+      address:address || "",
+      name: user.name,
+      phone: user.phoneNumber,
+      email: user.email,
+      aadhaar:`${process.env.DOMAIN}/aadhaarImage/${imageObj.filename}`,
+    }
+    await user.save();
+
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error("Error during registration as volunteer:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 module.exports = {
   register,
   login,
@@ -920,5 +954,6 @@ module.exports = {
   updateProfileImage,
   appleLogin,
   storeNotificationToken,
-  getPaymentDetailsWithDay
+  getPaymentDetailsWithDay,
+  registerAsVolunteer
 };
