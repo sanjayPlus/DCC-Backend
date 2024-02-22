@@ -62,12 +62,12 @@ const CardStorage = multer.diskStorage({
       // console.log(file);
     },
   });
-  const aadhaarImage = multer({
+  const aadhaarImages = multer({
     storage: aadhaarStorage,
     limits: {
       fileSize: 20 * 1024 * 1024, // 20MB in bytes
     },
-  });
+  }).array('aadhaarImages', 2); // Limit to 2 images
   //get
   
   router.get('/protected', userAuth, userController.protected);
@@ -95,7 +95,7 @@ router.post('/add-vote',userAuth,userController.addVote);
 router.post('/profile-image',ProfileImage.single('profileImage'),userAuth,userController.updateProfileImage);
 router.post('/apple-login',userController.appleLogin);  
 router.post('/add-notification-token',userAuth,userController.storeNotificationToken);
-router.post('/apply-as-volunteer',aadhaarImage.single('aadhaarImage'),userAuth,userController.registerAsVolunteer);
+router.post('/apply-as-volunteer',aadhaarImages,userAuth,userController.registerAsVolunteer);
 //update
 router.put('/update', userAuth, userController.update);
 

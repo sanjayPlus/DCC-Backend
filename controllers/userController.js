@@ -897,14 +897,10 @@ const getPaymentDetailsWithDay = async (req, res) => {
 
 const registerAsVolunteer = async (req, res) => {
   try {
-   const  {wardNo,boothNo,aadhaarNo,madalamPresident,address} = req.body;
-
-    if(!wardNo || !boothNo || !aadhaarNo || !madalamPresident){
-      return res.status(400).json({ error: "Please provide all required fields." });
-    }
-    const imageObj = req.file;
-    if(!imageObj){
-      return res.status(400).json({ error: "Please provide image" });
+   const  {wardNo,boothNo,aadhaarNo,madalamPresident,address,mandalamMember} = req.body;
+    const imageObjs = req.files;
+    if(!imageObjs || imageObjs.length === 0){
+      return res.status(400).json({ error: "Please provide images" });
     }
     const user = await User.findById(req.user.userId);
     if (!user) {
@@ -920,7 +916,9 @@ const registerAsVolunteer = async (req, res) => {
       name: user.name,
       phone: user.phoneNumber,
       email: user.email,
-      aadhaar:`${process.env.DOMAIN}/aadhaarImage/${imageObj.filename}`,
+      aadhaar: imageObjs.map(file => `${process.env.DOMAIN}/aadhaarImage/${file.filename}`),
+      mandalamMember,
+
     }
     await user.save();
 
