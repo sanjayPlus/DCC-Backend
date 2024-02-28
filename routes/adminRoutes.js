@@ -173,6 +173,48 @@ const videoGallery = multer({
   storage: videoStorage,
   limits: { fileSize: 50 * 1024 * 1024 }, // 50MB limit
 });
+const memeStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/memeImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
+// Configure storage engine instead of dest object.
+const memeImage = multer({
+  storage: memeStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
+const reelsStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/reelsImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
+// Configure storage engine instead of dest object.
+const reelsImage = multer({
+  storage: reelsStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
 router.post('/login',adminController.adminLogin);
  router.post('/register',adminController.adminRegister);
 router.get('/user/:id',adminAuth,adminController.getUser);
@@ -193,9 +235,12 @@ router.get('/districtV3',adminController.getDistrictV3);
 router.get('/districtV4',adminController.getDistrictV4);
 router.get('/notifications',adminController.getNotifications);
 router.get('/videogallery',adminController.getVideogallery);
+router.get('/reels',adminController.getReels);
+router.get('/meme',adminController.getMeme);
 
 
 router.post('/gallery',galleryImage.single('image'),adminAuth,adminController.addGallery);
+router.post('/meme',memeImage.single('image'),adminAuth,adminController.addGallery);
 router.post('/ad',ADImage.single('image'),adminAuth,adminController.addAd);
 router.post('/calendar-event',calendarImage.single("image"),adminAuth,adminController.addCalendarEvent);
 router.post('/slogan',sloganImage.single('image'),adminController.addSlogan);
@@ -212,7 +257,8 @@ router.post('/add-panchayath',adminAuth,adminController.addPanchayath);
 router.post('/add-corporation',adminAuth,adminController.addCorporation);
 router.post('/add-municipality',adminAuth,adminController.addMunicipality);
 router.post('/add-videogallery',videoGallery.single('video'),adminAuth,adminController.AddVideogallery);
-
+router.post('/add-reels',reelsImage.single('image'),adminAuth,adminController.addReels);
+router.post('/add-meme',memeImage.single('image'),adminAuth,adminController.addMeme);
 
 
 router.post('/delete-district',adminAuth,adminController.deleteDistrict);
@@ -234,5 +280,7 @@ router.delete('/carousel/:id',adminAuth,adminController.deleteCarousel);
 router.delete('/poll/:id',adminAuth,adminController.deletePoll);
 router.delete('/delete-notification/:id',adminAuth,adminController.deleteNotification);
 router.delete('/delete-videogallery/:id',adminAuth,adminController.deleteVideogallery);
+router.delete('/reels/:id',adminAuth,adminController.deleteReels);
+router.delete('/meme/:id',adminAuth,adminController.deleteMeme);
 
 module.exports = router;

@@ -22,6 +22,8 @@ const VideoGallery = require("../models/VideoGallery");
 
 const cron = require('node-cron');
 const moment  =  require('moment');
+const Meme = require("../models/Meme");
+const Reels = require("../models/Reels");
 const cronExpression = '0 0 * * *';
 
 const myCronJob = cron.schedule(cronExpression, async () => {
@@ -235,6 +237,94 @@ const deleteImage = async (req, res) => {
         }
         
         res.status(200).json({ msg: "Image removed" });
+    } catch (error) {
+        console.error("Error deleting image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const addMeme = async (req, res) => {
+    try {
+        const { name, description} = req.body;
+        req.body.image = req.file;
+        let imageObj = req.body.image;
+        // if (!name || !description ) {
+        // return res
+        //     .status(400)
+        //     .json({ error: "Please provide all required fields." });
+        // }
+        const newGallery = await Meme.create({
+        name,
+        description,
+        image: `${process.env.DOMAIN}/memeImage/${imageObj.filename}`,
+        });
+        res.status(201).json(newGallery);
+    } catch (error) {
+        console.error("Error adding gallery:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const deleteMeme = async (req, res) => {
+    try {
+        const image = await Meme.findOneAndDelete({_id:req.params.id});
+        if (!image) {
+        return res.status(404).json({ error: "Image not found" });
+        }
+        
+        res.status(200).json({ msg: "Image removed" });
+    } catch (error) {
+        console.error("Error deleting image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const getMeme = async (req, res) => {
+    try {
+        const meme = await Meme.find({});
+        res.status(200).json(meme);
+    } catch (error) {
+        console.error("Error deleting image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const addReels = async (req, res) => {
+    try {
+        const { name, description} = req.body;
+        req.body.image = req.file;
+        let imageObj = req.body.image;
+        // if (!name || !description ) {
+        // return res
+        //     .status(400)
+        //     .json({ error: "Please provide all required fields." });
+        // }
+        const newGallery = await Reels.create({
+        name,
+        description,
+        image: `${process.env.DOMAIN}/reelsImage/${imageObj.filename}`,
+        });
+        res.status(201).json(newGallery);
+    } catch (error) {
+        console.error("Error adding gallery:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const deleteReels = async (req, res) => {
+    try {
+        const image = await Reels.findOneAndDelete({_id:req.params.id});
+        if (!image) {
+        return res.status(404).json({ error: "Image not found" });
+        }
+        
+        res.status(200).json({ msg: "Image removed" });
+    } catch (error) {
+        console.error("Error deleting image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const getReels = async (req, res) => {
+    try {
+        const reels = await Reels.find({});
+        res.status(200).json(reels);
     } catch (error) {
         console.error("Error deleting image:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
@@ -1540,6 +1630,12 @@ module.exports = {
     getAllOrders,
     addGallery,
     deleteImage,
+    addMeme,
+    deleteMeme,
+    getMeme,
+    addReels,
+    deleteReels,
+    getReels,
     addCalendarEvent,
     getCalendarEvents,
     deleteCalendarEvent,
@@ -1586,5 +1682,6 @@ module.exports = {
     deleteNotification,
     AddVideogallery,
     getVideogallery,
-    deleteVideogallery
+    deleteVideogallery,
+
 }
