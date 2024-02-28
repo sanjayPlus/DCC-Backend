@@ -300,6 +300,7 @@ const addReels = async (req, res) => {
         name,
         description,
         image: `${process.env.DOMAIN}/reelsImage/${imageObj.filename}`,
+        link: req.body.link
         });
         res.status(201).json(newGallery);
     } catch (error) {

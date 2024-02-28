@@ -13,6 +13,9 @@ const ReelsSchema = new mongoose.Schema({
     image: {
         type: String,
     },
+    link: {
+        type: String,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
