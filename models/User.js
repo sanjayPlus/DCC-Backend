@@ -90,14 +90,18 @@ const userSchema = new mongoose.Schema({
     name: String,
     phone: String,
     email: String,
-    boothNo: String,
+    booth: String,
     aadhaar: Array,
     wardNo: String,
     aadhaarNo: String,
     madalamPresident: String,
     address: String,
     mandalamMember: String,
-
+    volunteerId: String,
+    district: String,
+    constituency: String,
+    assembly: String,
+    boothRule: String,
     applied: {
       type: Boolean,
       default: false

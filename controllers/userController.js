@@ -12,6 +12,7 @@ const serviceAccount = require("../firebase/firebase");
 const Poll = require("../models/Poll");
 const Notification = require("../models/Notification");
 const Payment = require("../models/Payment");
+const axios  = require("axios");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -897,10 +898,13 @@ const getPaymentDetailsWithDay = async (req, res) => {
 
 const registerAsVolunteer = async (req, res) => {
   try {
-   const  {wardNo,boothNo,aadhaarNo,madalamPresident,address,mandalamMember} = req.body;
+   const  {wardNo,booth,aadhaarNo,madalamPresident,address,mandalamMember,district,constituency,assembly,boothRule} = req.body;
     const imageObjs = req.files;
     if(!imageObjs || imageObjs.length === 0){
       return res.status(400).json({ error: "Please provide images" });
+    }
+    if(!wardNo || !booth || !aadhaarNo  || !address ||  !district || !constituency || !assembly){
+      return res.status(400).json({ error: "Please provide all details" });
     }
     const user = await User.findById(req.user.userId);
     if (!user) {
@@ -909,7 +913,10 @@ const registerAsVolunteer = async (req, res) => {
     //if details added
     user.volunteer = {
       wardNo,
-      boothNo,
+      booth,
+      district,
+      constituency,
+      assembly,
       aadhaarNo,
       madalamPresident,
       address:address || "",
@@ -918,10 +925,17 @@ const registerAsVolunteer = async (req, res) => {
       email: user.email,
       aadhaar: imageObjs.map(file => `${process.env.DOMAIN}/aadhaarImage/${file.filename}`),
       mandalamMember,
-
+      boothRule,
     }
-    await user.save();
-
+    axios.post(`${process.env.DCC_BACKEND_URL}/api/volunteer/register`, {
+        ...user.volunteer,
+        dccappuserId: user._id,
+        
+    }).then((res) => {
+      user.volunteer.volunteerId = res.data._id;
+      user.volunteer.applied = true;
+      user.save()
+    })
     res.status(200).json({ user });
   } catch (error) {
     console.error("Error during registration as volunteer:", error.message);
