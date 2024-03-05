@@ -53,8 +53,8 @@ const users = await User.find({
             registration_ids: allTokens,
             notification: {
                 body: `Happy birthday ${user.name} 🥳! We hope all your birthday wishes and dreams come true.`,
-                title: "SADHBHAVANA APP",
-                android_channel_id: "SADHBHAVANA",
+                title: `${process.env.SITE_NAME} - Happy Birthday`,
+                android_channel_id: `${process.env.SITE_NAME}`,
             },
         };
         console.log(JSON.stringify(payload));
@@ -1509,7 +1509,7 @@ async function sendNotificationsToAllDevices(req, res) {
             registration_ids: allTokens,
             notification: {
                 body: title,
-                title: "SADHBHAVANA APP",
+                title: `${process.env.SITE_NAME}`,
             },
             data: {
                 url: url,
