@@ -907,6 +907,10 @@ const registerAsVolunteer = async (req, res) => {
     if (!user) {
       return res.status(400).json({ error: "User not found" });
     }
+    const images = [];
+    for (let i = 0; i < imageObjs.length; i++) {
+      images.push(`${process.env.DOMAIN}/aadhaarImage/${imageObjs[i].filename}`);
+    }
     //if details added
     user.volunteer = {
       wardNo: wardNo || "",
@@ -920,9 +924,9 @@ const registerAsVolunteer = async (req, res) => {
       name: user.name,
       phone: user.phoneNumber,
       email: user.email,
-      aadhaar: imageObjs.map(file => `${process.env.DOMAIN}/aadhaarImage/${file.filename}`) || [],
+      aadhaar:images,
       mandalamMember: mandalamMember || "",
-      boothRule,
+      boothRule:boothRule || [],
 
     }
     const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
