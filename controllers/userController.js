@@ -935,7 +935,7 @@ const registerAsVolunteer = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
       expiresIn: "36500d",
     })
-    axios.post(`${process.env.VOLUNTEER_URL}/api/volunteer/register`, {
+    axios.post(`${process.env.VOLUNTEER_URL}/api/volunteer/register-from-ap`, {
         ...user.volunteer,
         dccappuserId: user._id,
         password: user.password,
