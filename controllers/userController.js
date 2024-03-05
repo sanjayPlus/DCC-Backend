@@ -900,10 +900,7 @@ const registerAsVolunteer = async (req, res) => {
   try {
    const  {wardNo,booth,aadhaarNo,madalamPresident,address,mandalamMember,district,constituency,assembly,boothRule} = req.body;
     const imageObjs = req.files;
-    if(!imageObjs || imageObjs.length === 0){
-      return res.status(400).json({ error: "Please provide images" });
-    }
-    if(!wardNo || !booth || !aadhaarNo  || !address ||  !district || !constituency || !assembly){
+    if(!wardNo || !booth ||!address ||  !district || !constituency || !assembly){
       return res.status(400).json({ error: "Please provide all details" });
     }
     const user = await User.findById(req.user.userId);
@@ -912,19 +909,19 @@ const registerAsVolunteer = async (req, res) => {
     }
     //if details added
     user.volunteer = {
-      wardNo,
+      wardNo: wardNo || "",
       booth,
       district,
       constituency,
       assembly,
-      aadhaarNo,
-      madalamPresident,
+      aadhaarNo: aadhaarNo || "",
+      madalamPresident:madalamPresident || "",
       address:address || "",
       name: user.name,
       phone: user.phoneNumber,
       email: user.email,
-      aadhaar: imageObjs.map(file => `${process.env.DOMAIN}/aadhaarImage/${file.filename}`),
-      mandalamMember,
+      aadhaar: imageObjs.map(file => `${process.env.DOMAIN}/aadhaarImage/${file.filename}`) || [],
+      mandalamMember: mandalamMember || "",
       boothRule,
 
     }
