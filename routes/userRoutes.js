@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const userAuth = require('../middleware/userAuth');
 const multer = require("multer");
+const appServerAuth = require('../middleware/appServerAuth');
 
 const CardStorage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -96,6 +97,9 @@ router.post('/profile-image',ProfileImage.single('profileImage'),userAuth,userCo
 router.post('/apple-login',userController.appleLogin);  
 router.post('/add-notification-token',userAuth,userController.storeNotificationToken);
 router.post('/apply-as-volunteer',aadhaarImages,userAuth,userController.registerAsVolunteer);
+router.post('/verify-volunteer',appServerAuth,userController.verifyVolunteer);
+router.post('/delete-volunteer',appServerAuth,userController.disQualifyVolunteer);
+
 //update
 router.put('/update', userAuth, userController.update);
 

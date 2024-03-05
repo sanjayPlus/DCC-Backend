@@ -86,7 +86,7 @@ async function sendMail(to, subject, text, html) {
     });
 
     const mailOptions = {
-      from: `SADBHAVAN <${process.env.EMAIL}>`,
+      from: `${process.env.SITE_NAME} <${process.env.EMAIL}>`,
       to,
       subject,
       text,

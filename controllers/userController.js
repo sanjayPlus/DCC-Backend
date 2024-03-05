@@ -294,15 +294,15 @@ const sendOTP = async (req, res) => {
       `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
       <div style="margin:50px auto;width:70%;padding:20px 0">
         <div style="border-bottom:1px solid #eee">
-          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADBHAVAN APP</a>
+          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">${process.env.SITE_NAME} APP</a>
         </div>
         <p style="font-size:1.1em">Hi ${user.name},</p>
-        <p>Thank you for choosing SADBHAVAN APP. Use the following OTP to complete your Sign Up procedures. OTP is valid for 20 minutes</p>
+        <p>Thank you for choosing ${process.env.SITE_NAME}. Use the following OTP to complete your Sign Up procedures. OTP is valid for 20 minutes</p>
         <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
-        <p style="font-size:0.9em;">Regards,<br />SADBHAVAN APP</p>
+        <p style="font-size:0.9em;">Regards,<br />${process.env.SITE_NAME}</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-          <p>SADBHAVAN APP</p>
+          <p>${process.env.SITE_NAME}</p>
         </div>
       </div>
     </div>`
@@ -365,16 +365,16 @@ const verifyOTP = async (req, res) => {
       `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
       <div style="margin:50px auto;width:70%;padding:20px 0">
         <div style="border-bottom:1px solid #eee">
-          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADBHAVAN APP</a>
+          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">${process.env.SITE_NAME} APP</a>
         </div>
         <p style="font-size:1.1em">Hi ${user.name},</p>
-        <p>WELCOME TO SADBHAVAN APP. Thank you for choosing SADBHAVAN APP.</p>
+        <p>WELCOME TO ${process.env.SITE_NAME} APP. Thank you for choosing ${process.env.SITE_NAME} APP.</p>
         <p>Congratulations Your Account has been created successfully</p>
         
-        <p style="font-size:0.9em;">Regards,<br />SADBHAVAN APP</p>
+        <p style="font-size:0.9em;">Regards,<br />${process.env.SITE_NAME} APP</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-          <p>SADBHAVAN APP</p>
+          <p>${process.env.SITE_NAME} APP</p>
         </div>
       </div>
     </div>`
@@ -503,16 +503,16 @@ const forgotPassword = async (req, res) => {
       `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
       <div style="margin:50px auto;width:70%;padding:20px 0">
         <div style="border-bottom:1px solid #eee">
-          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADBHAVAN APP</a>
+          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">${process.env.SITE_NAME} APP</a>
         </div>
         <p style="font-size:1.1em">Hi ${user.name},</p>
         <p>We have received a request to reset your password. Use the following OTP to reset your password. OTP is valid for 20 minutes</p>
         <p>Please do not share this OTP with anyone.</p>
         <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
-        <p style="font-size:0.9em;">Regards,<br />SADBHAVAN APP</p>
+        <p style="font-size:0.9em;">Regards,<br />${process.env.SITE_NAME} APP</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-          <p>SADBHAVAN APP</p>
+          <p>${process.env.SITE_NAME} APP</p>
         </div>
       </div>
     </div>`
@@ -926,18 +926,59 @@ const registerAsVolunteer = async (req, res) => {
       aadhaar: imageObjs.map(file => `${process.env.DOMAIN}/aadhaarImage/${file.filename}`),
       mandalamMember,
       boothRule,
+
     }
+    const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
+      expiresIn: "36500d",
+    })
     axios.post(`${process.env.DCC_BACKEND_URL}/api/volunteer/register`, {
         ...user.volunteer,
         dccappuserId: user._id,
-        
+        password: user.password,
+        dccappurl:process.env.DOMAIN
+    },{
+      headers: {
+        "x-access-token": token
+      }
     }).then((res) => {
       user.volunteer.volunteerId = res.data._id;
       user.volunteer.applied = true;
+
       user.save()
     })
     res.status(200).json({ user });
   } catch (error) {
+    console.error("Error during registration as volunteer:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+const verifyVolunteer = async (req, res) => {
+  try {
+    const user = await User.findById(req.body.id);
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    user.volunteer.applied = true;
+    user.volunteer.status = true;
+    user.save();
+    
+  }catch(error){
+    console.error("Error during registration as volunteer:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+const disQualifyVolunteer = async (req, res) => {
+  try {
+    const user = await User.findById(req.body.id);
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    user.volunteer.applied = false;
+    user.volunteer.status = false;
+    user.save();
+      res.status(200).json({ message: "Disqualified Successfully" });
+  }
+  catch(error){
     console.error("Error during registration as volunteer:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -967,5 +1008,7 @@ module.exports = {
   appleLogin,
   storeNotificationToken,
   getPaymentDetailsWithDay,
-  registerAsVolunteer
+  registerAsVolunteer,
+  verifyVolunteer,
+  disQualifyVolunteer
 };
