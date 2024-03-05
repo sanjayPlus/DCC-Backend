@@ -908,8 +908,11 @@ const registerAsVolunteer = async (req, res) => {
       return res.status(400).json({ error: "User not found" });
     }
     const images = [];
-    for (let i = 0; i < imageObjs.length; i++) {
-      images.push(`${process.env.DOMAIN}/aadhaarImage/${imageObjs[i].filename}`);
+    if(imageObjs){
+
+      for (let i = 0; i < imageObjs.length; i++) {
+        images.push(`${process.env.DOMAIN}/aadhaarImage/${imageObjs[i].filename}`);
+      }
     }
     //if details added
     user.volunteer = {
