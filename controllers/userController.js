@@ -900,7 +900,7 @@ const registerAsVolunteer = async (req, res) => {
   try {
    const  {wardNo,booth,aadhaarNo,madalamPresident,address,mandalamMember,district,constituency,assembly,boothRule} = req.body;
     const imageObjs = req.files;
-    if(!wardNo || !booth ||!address ||  !district || !constituency || !assembly){
+    if( !booth ||  !district || !constituency || !assembly){
       return res.status(400).json({ error: "Please provide all details" });
     }
     const user = await User.findById(req.user.userId);
