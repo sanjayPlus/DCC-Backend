@@ -944,6 +944,10 @@ const registerAsVolunteer = async (req, res) => {
       headers: {
         "x-access-token": token
       }
+    }).then(res=>{
+      console.log(res)
+    }).catch(err=>{
+      console.log(err)
     })
     user.volunteer.volunteerId = res.data._id;
     user.volunteer.applied = true;
