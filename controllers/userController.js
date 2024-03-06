@@ -975,7 +975,7 @@ const registerAsVolunteer = async (req, res) => {
 
     res.status(200).json({ user });
   } catch (error) {
-    console.error("Error during registration as a volunteer:", error.message);
+    console.error("Error during registration as a volunteer:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
