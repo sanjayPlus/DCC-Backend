@@ -968,7 +968,7 @@ const verifyVolunteer = async (req, res) => {
     user.volunteer.applied = true;
     user.volunteer.status = true;
     user.save();
-    
+      res.status(200).json({ message: "Verified Successfully" });
   }catch(error){
     console.error("Error during registration as volunteer:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
