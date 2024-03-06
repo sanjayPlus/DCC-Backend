@@ -963,6 +963,7 @@ const registerAsVolunteer = async (req, res) => {
       },
       {
         headers: {
+          "Content-Type": "application/json",
           "x-access-token": token,
         },
       }
