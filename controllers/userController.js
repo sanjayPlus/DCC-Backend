@@ -944,12 +944,11 @@ const registerAsVolunteer = async (req, res) => {
       headers: {
         "x-access-token": token
       }
-    }).then((res) => {
-      user.volunteer.volunteerId = res.data._id;
-      user.volunteer.applied = true;
-
-      user.save()
     })
+    user.volunteer.volunteerId = res.data._id;
+    user.volunteer.applied = true;
+
+    user.save()
     res.status(200).json({ user });
   } catch (error) {
     console.error("Error during registration as volunteer:", error.message);
