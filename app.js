@@ -13,6 +13,7 @@ const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
 const jwt = require("jsonwebtoken");
 const session = require("express-session");
 const User = require('./models/User');
+const morgan = require('morgan');
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/dcc';
 // Connect to MongoDB
@@ -36,6 +37,7 @@ mongoose.connect(MONGODB_URI)
 
 // Middleware
 app.use(cors());
+app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ limit: '50mb', extended: false, parameterLimit: 50000 }));
 app.use(express.static(path.join(__dirname, "public")))
