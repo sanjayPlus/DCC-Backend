@@ -973,12 +973,13 @@ const registerAsVolunteer = async (req, res) => {
       );
 
       user.volunteer.volunteerId = axiosResponse.data._id;
-      user.volunteer.applied = true;
-      await user.save();
+    
     } catch (error) {
       // If the registration fails, you might want to handle it appropriately.
       return res.status(400).json({ error: "Registration failed" });
     }
+    user.volunteer.applied = true;
+    await user.save();
     res.status(200).json({message: "Registered Successfully"});
   } catch (error) {
     console.error("Error during registration as a volunteer:", error);
