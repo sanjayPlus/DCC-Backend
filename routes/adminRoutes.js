@@ -154,6 +154,28 @@ const eventStorage = multer.diskStorage({
     },
   });
 
+  const socialMediaStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      // destination is used to specify the path of the directory in which the files have to be stored
+      cb(null, "./public/socialMediaImage");
+    },
+    filename: function (req, file, cb) {
+      // It is the filename that is given to the saved file.
+      const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+      cb(null, `${uniqueSuffix}-${file.originalname}`);
+      console.log(`${uniqueSuffix}-${file.originalname}`);
+      // console.log(file);
+    },
+  });
+  
+  // Configure storage engine instead of dest object.
+  const socialMediaImage = multer({
+    storage: socialMediaStorage,
+    limits: {
+      fileSize: 20 * 1024 * 1024, // 20MB in bytes
+    },
+  });
+
 
 router.post('/login',adminController.adminLogin);
  router.post('/register',adminController.adminRegister);
@@ -174,6 +196,7 @@ router.get('/districtV2',adminController.getDistrictV2);
 router.get('/districtV3',adminController.getDistrictV3);
 router.get('/districtV4',adminController.getDistrictV4);
 router.get('/notifications',adminController.getNotifications);
+router.get('/get-social-media',adminController.getSocialMediaDetails);
 
 
 
@@ -201,7 +224,8 @@ router.post('/delete-assembly',adminAuth,adminController.deleteAssembly);
 router.post('/delete-panchayath',adminAuth,adminController.deletePanchayath);
 router.post('/delete-corporation',adminAuth,adminController.deleteCorporation);
 router.post('/delete-municipality',adminAuth,adminController.deleteMunicipality);
-
+router.post('/add-category',adminAuth,adminController.addCategory);
+router.post('/add-social-media-details',socialMediaImage.single('image'),adminAuth,adminController.addSocialMediaDetails);
 
 router.delete('/user/:id',adminAuth,adminController.deleteUser);
 router.delete('/deleteImage/:id',adminAuth,adminController.deleteImage);

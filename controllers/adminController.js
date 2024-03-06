@@ -18,6 +18,7 @@ const admin = require("firebase-admin");
 const serviceAccount = require("../firebase/firebase");
 const Notification = require("../models/Notification");
 const NotificationList = require("../models/NotificationList");
+const SocialMedia = require("../models/SocialMedia");
 
 const adminLogin = async (req, res) => {
     try {
@@ -194,7 +195,7 @@ const addCalendarEvent = async (req, res) => {
         date,
         title,
         description,
-        image: `${process.env.DOMAIN}/calendarImage/${imageObj.filename}` ||  "https://sadbhavan.com/webimg/chaticon.png",
+        image: `${process.env.DOMAIN}/calendarImage/${imageObj.filename}` ||  "",
         })
         res.status(201).json(calendar);
 
@@ -1356,7 +1357,7 @@ async function sendNotificationsToAllDevices(req, res) {
             registration_ids: allTokens,
             notification: {
                 body: title,
-                title: "SADHAVANA APP",
+                title: "SADHBHAVANA APP",
             },
             data: {
                 url: url,
@@ -1430,6 +1431,79 @@ const deleteNotification = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const addCategory = async (req, res) => {
+    try {
+        const { category } = req.body;
+        const addSocialMedia = await SocialMedia.create({
+            category,
+        });
+        res.status(200).json({ addSocialMedia });
+    }catch (error) {
+        console.error("error adding social media:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const addSocialMediaDetails = async (req, res) => {
+    try {
+        const { name, facebook, instagram, youtube, position, category } = req.body;
+        const imageObj = req.file;
+        //  if(!name || !image || !facebook || !instagram || !youtube || !position || !category) {
+        //      return res.status(400).json({ error: "All fields are required" });   
+        //  }
+        // Find the category with the provided name
+        const existingCategory = await SocialMedia.findOne({ category: category });
+
+        // If category not found
+        if (!existingCategory) {
+            return res.status(404).json({ error: "Category not found" });
+        }
+        // Create a new social media details
+        const newSocialMediaDetails = {
+            name: name,
+             image: `${process.env.DOMAIN}/socialMediaImage/${imageObj.filename}`,
+            facebook: facebook,
+            instagram: instagram,
+            youtube: youtube,
+            position: position,
+        };
+       // Check if socialMediaSchema exists and is an array, if not initialize it
+       if (!existingCategory.socialMediaSchema || !Array.isArray(existingCategory.socialMediaSchema)) {
+        existingCategory.socialMediaSchema = [];
+    }
+
+    // Add the new social media details to the existing category
+    existingCategory.socialMediaSchema.push(newSocialMediaDetails);
+
+       // Save the updated category
+       await existingCategory.save();
+       console.log(existingCategory)
+       // Respond with success message or other relevant data
+       res.status(200).json({ message: "Social media details added successfully" });
+    } catch (error) {
+        console.error("Error adding social media details:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const getSocialMediaDetails = async (req, res) => {
+    try {
+        const { category } = req.query;
+
+        // Find the category with the provided name
+        const existingCategory = await SocialMedia.find({ category: category });
+        console.log(existingCategory, category)
+        // If category not found
+        if (!existingCategory) {
+            return res.status(404).json({ error: "Category not found" });
+        }
+
+        // Respond with the social media details
+        res.status(200).json({ socialMediaDetails: existingCategory[0].socialMediaSchema });
+    } catch (error) {
+        console.error("Error getting social media details:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 
 module.exports = {
     adminLogin,
@@ -1483,5 +1557,8 @@ module.exports = {
     deleteMunicipality,
     sendNotificationsToAllDevices,
     getNotifications,
-    deleteNotification
+    deleteNotification,
+    addCategory,
+    addSocialMediaDetails,
+    getSocialMediaDetails,
 }
