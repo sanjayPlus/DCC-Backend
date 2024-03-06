@@ -12,7 +12,7 @@ const serviceAccount = require("../firebase/firebase");
 const Poll = require("../models/Poll");
 const Notification = require("../models/Notification");
 const Payment = require("../models/Payment");
-const axios  = require("axios");
+const axios = require("axios");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -34,8 +34,8 @@ const register = async (req, res) => {
       assembly,
       panchayath,
       union,
-     corporation,
-     municipality
+      corporation,
+      municipality
     } = req.body;
 
     const user = await User.findOne({ email: email });
@@ -83,23 +83,23 @@ const register = async (req, res) => {
       email,
       password: hashedPassword,
       phoneNumber,
-      whatsappNumber:phoneNumber,
+      whatsappNumber: phoneNumber,
       date_of_birth,
       district,
       constituency,
       assembly,
-      panchayath:panchayath || "",
-      union:union || "",
-      corporation:corporation ||  "",
-      municipality:municipality  || ""
+      panchayath: panchayath || "",
+      union: union || "",
+      corporation: corporation || "",
+      municipality: municipality || ""
     });
     const savedUser = await newUser.save();
 
     // Step 5: Generate JWT
     const token = jwt.sign({ userId: savedUser._id }, jwtSecret, {
-       expiresIn: "36500d",
+      expiresIn: "36500d",
     });
-   
+
     // Step 6: Send Response
     res.json({
       token,
@@ -132,7 +132,7 @@ const login = async (req, res) => {
 
     // Step 5: Generate JWT
     const token = jwt.sign({ userId: user._id }, jwtSecret, {
-       expiresIn: "36500d",
+      expiresIn: "36500d",
     });
 
     // Step 6: Send Response
@@ -233,13 +233,13 @@ const update = async (req, res) => {
 
     if (blood_group) {
       user.blood_group = blood_group;
-    }   
+    }
     if (union) {
       user.union = union;
     }
-     if (municipality) {
+    if (municipality) {
       user.municipality = municipality;
-    }     
+    }
     if (corporation) {
       user.corporation = corporation;
     }
@@ -356,7 +356,7 @@ const verifyOTP = async (req, res) => {
 
     // Step 6: Send Response
     const token = jwt.sign({ userId: user._id }, jwtSecret, {
-       expiresIn: "36500d",
+      expiresIn: "36500d",
     });
     await sendMail(
       user.email,
@@ -562,7 +562,7 @@ const verifyForgotPasswordOTP = async (req, res) => {
 
     // Step 5: Generate JWT
     const token = jwt.sign({ userId: user._id }, jwtSecret, {
-       expiresIn: "36500d",
+      expiresIn: "36500d",
     });
     // Step 5: Send Response
     res.status(200).json({ token: token });
@@ -588,7 +588,7 @@ const createIdCard = async (req, res) => {
     const ctx = canvas.getContext("2d");
 
     // Load and draw the background image
-    const backgroundImage = await loadImage(process.env.DOMAIN+'/idcard1.jpg');
+    const backgroundImage = await loadImage(process.env.DOMAIN + '/idcard1.jpg');
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
     // Draw white background if needed for additional fields
@@ -605,14 +605,14 @@ const createIdCard = async (req, res) => {
     ctx.fillText(`Name: ${user.name}`, 220, 120);
     ctx.fillText(`Email: ${user.email}`, 220, 140);
     ctx.fillText(`Phone: ${user.phoneNumber}`, 220, 160);
-      const userDateOfBirth = user.date_of_birth.toString(); // Convert to string if it's a Date object
+    const userDateOfBirth = user.date_of_birth.toString(); // Convert to string if it's a Date object
 
-// Extract only the date part without the time component
-const dateObject = new Date(userDateOfBirth);
-const formattedDate = dateObject.toDateString();
+    // Extract only the date part without the time component
+    const dateObject = new Date(userDateOfBirth);
+    const formattedDate = dateObject.toDateString();
 
-// Use this `formattedDate` variable in your ctx.fillText for DOB
-ctx.fillText(`DOB: ${formattedDate}`, 220, 180);
+    // Use this `formattedDate` variable in your ctx.fillText for DOB
+    ctx.fillText(`DOB: ${formattedDate}`, 220, 180);
 
 
     // if (user.blood_group) {
@@ -621,7 +621,7 @@ ctx.fillText(`DOB: ${formattedDate}`, 220, 180);
     // Add additional fields like District and Panchayat if they exist in the User model
     if (user.district) {
       ctx.fillText(`District: ${user.district}`, 220, 200);
-    }  
+    }
     // if (user.union) {
     //   ctx.fillText(`Union: ${user.union}`, 220, 220);
     // }
@@ -680,7 +680,7 @@ const AddFeedBack = async (req, res) => {
 const googleLogin = async (req, res) => {
   try {
     const { token } = req.body;
-  console.log(token,"google")
+    console.log(token, "google")
     if (!token) {
       return res.status(400).json({ error: "ID token not provided." });
     }
@@ -694,7 +694,7 @@ const googleLogin = async (req, res) => {
     const tokenNew = jwt.sign({ userId: user._id }, jwtSecret, {
       expiresIn: "36500d",
     });
-console.log(tokenNew)
+    console.log(tokenNew)
     res
       .status(200)
       .json({ token: tokenNew, user: { id: user._id, name: user.name } });
@@ -730,7 +730,7 @@ const autoLogin = async (req, res) => {
         }),
       }
     );
-      console.log(response)
+    console.log(response)
     if (!response.ok) {
       throw new Error("Failed to fetch data from STORE_URL");
     }
@@ -821,7 +821,7 @@ const addVote = async (req, res) => {
 
 const updateProfileImage = async (req, res) => {
   try {
-    const profileImage  = req.file;
+    const profileImage = req.file;
     const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(400).json({ error: "User not found" });
@@ -837,7 +837,7 @@ const updateProfileImage = async (req, res) => {
 const appleLogin = async (req, res) => {
   try {
     const { token } = req.body;
-    console.log(token,"apple")
+    console.log(token, "apple")
     if (!token) {
       return res.status(400).json({ error: "ID token not provided." });
     }
@@ -862,15 +862,15 @@ const appleLogin = async (req, res) => {
 
 const storeNotificationToken = async (req, res) => {
   try {
-  const { FCMToken } = req.body;
-  const notification = await Notification.findOne({ token:FCMToken  }); 
-  if(!notification){
-    const notification = await Notification.create({ token: FCMToken, userId: req.user.userId });
-    res.status(200).json({ notification });
-  }else{
-    res.status(200).json({ notification });
-  }
-  }catch(error){
+    const { FCMToken } = req.body;
+    const notification = await Notification.findOne({ token: FCMToken });
+    if (!notification) {
+      const notification = await Notification.create({ token: FCMToken, userId: req.user.userId });
+      res.status(200).json({ notification });
+    } else {
+      res.status(200).json({ notification });
+    }
+  } catch (error) {
     console.error("Error during token store:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -878,7 +878,7 @@ const storeNotificationToken = async (req, res) => {
 const getPaymentDetailsWithDay = async (req, res) => {
   try {
     const { day } = req.params;
-    
+
     // Calculate the start date based on the provided day count
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - day);
@@ -949,37 +949,43 @@ const registerAsVolunteer = async (req, res) => {
       boothRule: boothRule || [],
     };
 
+    await user.save();
+
     const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
       expiresIn: "36500d",
     });
 
-    const axiosResponse = await axios.post(
-      `${process.env.VOLUNTEER_URL}/api/volunteer/register-from-app`,
-      {
-        ...user.volunteer,
-        dccappuserId: user._id,
-        password: user.password,
-        dccappurl: process.env.DOMAIN,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "x-access-token": token,
+    try {
+      const axiosResponse = await axios.post(
+        `${process.env.VOLUNTEER_URL}/api/volunteer/register-from-app`,
+        {
+          ...user.volunteer,
+          dccappuserId: user._id,
+          password: user.password,
+          dccappurl: process.env.DOMAIN,
         },
-      }
-    );
-console.log(axiosResponse.data)
-    // user.volunteer.volunteerId = axiosResponse.data._id;
-    user.volunteer.applied = true;
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": token,
+          },
+        }
+      );
 
-    await user.save();
-
-    res.status(200).json({ user });
+      user.volunteer.volunteerId = axiosResponse.data._id;
+      user.volunteer.applied = true;
+      await user.save();
+    } catch (error) {
+      // If the registration fails, you might want to handle it appropriately.
+      return res.status(400).json({ error: "Registration failed" });
+    }
+    res.status(200).json({message: "Registered Successfully"});
   } catch (error) {
     console.error("Error during registration as a volunteer:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 const verifyVolunteer = async (req, res) => {
   try {
@@ -990,8 +996,8 @@ const verifyVolunteer = async (req, res) => {
     user.volunteer.applied = true;
     user.volunteer.status = true;
     user.save();
-      res.status(200).json({ message: "Verified Successfully" });
-  }catch(error){
+    res.status(200).json({ message: "Verified Successfully" });
+  } catch (error) {
     console.error("Error during registration as volunteer:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -1005,9 +1011,9 @@ const disQualifyVolunteer = async (req, res) => {
     user.volunteer.applied = false;
     user.volunteer.status = false;
     user.save();
-      res.status(200).json({ message: "Disqualified Successfully" });
+    res.status(200).json({ message: "Disqualified Successfully" });
   }
-  catch(error){
+  catch (error) {
     console.error("Error during registration as volunteer:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
