@@ -41,7 +41,7 @@ oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 //           }
 //           .card {
 //             display: grid;
-           
+
 //           }
 //           .card button{
 //             padding: 10px 25px;
@@ -59,7 +59,7 @@ oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN });
 //         </div>
 //       </body>
 //     </html>
-    
+
 //       `,
 //     };
 
@@ -86,7 +86,7 @@ async function sendMail(to, subject, text, html) {
     });
 
     const mailOptions = {
-      from: `SADHBHAVANA <${process.env.EMAIL}>`,
+      from: `${process.env.SITE_NAME} <${process.env.EMAIL}>`,
       to,
       subject,
       text,

@@ -19,6 +19,70 @@ const serviceAccount = require("../firebase/firebase");
 const Notification = require("../models/Notification");
 const NotificationList = require("../models/NotificationList");
 const SocialMedia = require("../models/SocialMedia");
+const VideoGallery = require("../models/VideoGallery");
+
+const cron = require('node-cron');
+const moment  =  require('moment');
+const Meme = require("../models/Meme");
+const Reels = require("../models/Reels");
+const cronExpression = '0 0 * * *';
+
+const myCronJob = cron.schedule(cronExpression, async () => {
+    // Send happy birthday message
+ const currentDate = moment().format('YYYY-MM-DD');
+const date = new Date(currentDate);
+
+const users = await User.find({
+  $expr: {
+    $and: [
+      { $eq: [{ $dayOfMonth: '$date_of_birth' }, date.getDate()] },
+      { $eq: [{ $month: '$date_of_birth' }, date.getMonth() + 1] }, // Month is zero-based in JavaScript Date object
+    ],
+  },
+});
+
+    // Use Promise.all to wait for all asynchronous operations to complete
+    await Promise.all(users.map(async (user) => {
+        // Retrieve all tokens from the Notification model
+        const allTokens = await Notification.find({ userId: user._id }).distinct('token');
+        if (!allTokens) {
+            throw new Error('No tokens found');
+        }
+
+        // Build the payload
+        const payload = {
+            registration_ids: allTokens,
+            notification: {
+                body: `Happy birthday ${user.name} 🥳! We hope all your birthday wishes and dreams come true.`,
+                title: `${process.env.SITE_NAME} - Happy Birthday`,
+                android_channel_id: `${process.env.SITE_NAME}`,
+            },
+        };
+        console.log(JSON.stringify(payload));
+
+        const result = await fetch('https://fcm.googleapis.com/fcm/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `key=${process.env.FIREBASE_SERVER_KEY}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await result.json();
+
+        // Check for errors in the HTTP response
+        if (!result.ok) {
+            throw new Error(`FCM request failed with status ${result.status}: ${data}`);
+        }
+    }));
+
+    console.log('Cron job is running!');
+});
+
+
+// Start the cron job
+myCronJob.start();
 
 const adminLogin = async (req, res) => {
     try {
@@ -174,6 +238,95 @@ const deleteImage = async (req, res) => {
         }
         
         res.status(200).json({ msg: "Image removed" });
+    } catch (error) {
+        console.error("Error deleting image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const addMeme = async (req, res) => {
+    try {
+        const { name, description} = req.body;
+        req.body.image = req.file;
+        let imageObj = req.body.image;
+        // if (!name || !description ) {
+        // return res
+        //     .status(400)
+        //     .json({ error: "Please provide all required fields." });
+        // }
+        const newGallery = await Meme.create({
+        name,
+        description,
+        image: `${process.env.DOMAIN}/memeImage/${imageObj.filename}`,
+        });
+        res.status(201).json(newGallery);
+    } catch (error) {
+        console.error("Error adding gallery:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const deleteMeme = async (req, res) => {
+    try {
+        const image = await Meme.findOneAndDelete({_id:req.params.id});
+        if (!image) {
+        return res.status(404).json({ error: "Image not found" });
+        }
+        
+        res.status(200).json({ msg: "Image removed" });
+    } catch (error) {
+        console.error("Error deleting image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const getMeme = async (req, res) => {
+    try {
+        const meme = await Meme.find({});
+        res.status(200).json(meme);
+    } catch (error) {
+        console.error("Error deleting image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const addReels = async (req, res) => {
+    try {
+        const { name, description} = req.body;
+        req.body.image = req.file;
+        let imageObj = req.body.image;
+        // if (!name || !description ) {
+        // return res
+        //     .status(400)
+        //     .json({ error: "Please provide all required fields." });
+        // }
+        const newGallery = await Reels.create({
+        name,
+        description,
+        image: `${process.env.DOMAIN}/reelsImage/${imageObj.filename}`,
+        link: req.body.link
+        });
+        res.status(201).json(newGallery);
+    } catch (error) {
+        console.error("Error adding gallery:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const deleteReels = async (req, res) => {
+    try {
+        const image = await Reels.findOneAndDelete({_id:req.params.id});
+        if (!image) {
+        return res.status(404).json({ error: "Image not found" });
+        }
+        
+        res.status(200).json({ msg: "Image removed" });
+    } catch (error) {
+        console.error("Error deleting image:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const getReels = async (req, res) => {
+    try {
+        const reels = await Reels.find({});
+        res.status(200).json(reels);
     } catch (error) {
         console.error("Error deleting image:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
@@ -1357,7 +1510,7 @@ async function sendNotificationsToAllDevices(req, res) {
             registration_ids: allTokens,
             notification: {
                 body: title,
-                title: "SADHBHAVANA APP",
+                title: `${process.env.SITE_NAME}`,
             },
             data: {
                 url: url,
@@ -1505,6 +1658,44 @@ const getSocialMediaDetails = async (req, res) => {
     }
 }
 
+const AddVideogallery = async (req, res) => {
+    try {
+        const { title, url } = req.body;
+        const videoObj = req.file;
+        const newVideo = await VideoGallery.create({
+            title: title,
+            url: url,
+            video: `${process.env.DOMAIN}/videoGallery/${videoObj.filename}`,
+        })
+            res.status(200).json(newVideo);
+    } catch (error) {
+        console.error("Error deleting notification:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const getVideogallery = async (req, res) => {
+    try {
+        const videos = await VideoGallery.find();
+        res.status(200).json(videos);
+    } catch (error) {
+        console.error("Error deleting notification:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const deleteVideogallery = async (req, res) => {
+    try {
+        const video = await VideoGallery.findOneAndDelete({_id:req.params.id});
+        if (!video) {
+        return res.status(404).json({ error: "Video not found" });
+        }
+        res.status(200).json({ msg: "Video removed" });
+    } catch (error) {
+        console.error("Error deleting video:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
 module.exports = {
     adminLogin,
     adminRegister,
@@ -1514,6 +1705,12 @@ module.exports = {
     getAllOrders,
     addGallery,
     deleteImage,
+    addMeme,
+    deleteMeme,
+    getMeme,
+    addReels,
+    deleteReels,
+    getReels,
     addCalendarEvent,
     getCalendarEvents,
     deleteCalendarEvent,
@@ -1559,6 +1756,9 @@ module.exports = {
     getNotifications,
     deleteNotification,
     addCategory,
+    AddVideogallery,
+    getVideogallery,
+    deleteVideogallery,
     addSocialMediaDetails,
-    getSocialMediaDetails,
+    getSocialMediaDetails
 }

@@ -12,6 +12,7 @@ const serviceAccount = require("../firebase/firebase");
 const Poll = require("../models/Poll");
 const Notification = require("../models/Notification");
 const Payment = require("../models/Payment");
+const axios = require("axios");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -33,8 +34,8 @@ const register = async (req, res) => {
       assembly,
       panchayath,
       union,
-     corporation,
-     municipality
+      corporation,
+      municipality
     } = req.body;
 
     const user = await User.findOne({ email: email });
@@ -82,23 +83,23 @@ const register = async (req, res) => {
       email,
       password: hashedPassword,
       phoneNumber,
-      whatsappNumber:phoneNumber,
+      whatsappNumber: phoneNumber,
       date_of_birth,
       district,
       constituency,
       assembly,
-      panchayath:panchayath || "",
-      union:union || "",
-      corporation:corporation ||  "",
-      municipality:municipality  || ""
+      panchayath: panchayath || "",
+      union: union || "",
+      corporation: corporation || "",
+      municipality: municipality || ""
     });
     const savedUser = await newUser.save();
 
     // Step 5: Generate JWT
     const token = jwt.sign({ userId: savedUser._id }, jwtSecret, {
-       expiresIn: "36500d",
+      expiresIn: "36500d",
     });
-   
+
     // Step 6: Send Response
     res.json({
       token,
@@ -131,7 +132,7 @@ const login = async (req, res) => {
 
     // Step 5: Generate JWT
     const token = jwt.sign({ userId: user._id }, jwtSecret, {
-       expiresIn: "36500d",
+      expiresIn: "36500d",
     });
 
     // Step 6: Send Response
@@ -232,13 +233,13 @@ const update = async (req, res) => {
 
     if (blood_group) {
       user.blood_group = blood_group;
-    }   
+    }
     if (union) {
       user.union = union;
     }
-     if (municipality) {
+    if (municipality) {
       user.municipality = municipality;
-    }     
+    }
     if (corporation) {
       user.corporation = corporation;
     }
@@ -293,15 +294,15 @@ const sendOTP = async (req, res) => {
       `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
       <div style="margin:50px auto;width:70%;padding:20px 0">
         <div style="border-bottom:1px solid #eee">
-          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADHBHAVANA APP</a>
+          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADBHAVAN APP</a>
         </div>
         <p style="font-size:1.1em">Hi ${user.name},</p>
-        <p>Thank you for choosing SADHBHAVANA APP. Use the following OTP to complete your Sign Up procedures. OTP is valid for 20 minutes</p>
+        <p>Thank you for choosing SADBHAVAN APP. Use the following OTP to complete your Sign Up procedures. OTP is valid for 20 minutes</p>
         <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
-        <p style="font-size:0.9em;">Regards,<br />SADHBHAVANA APP</p>
+        <p style="font-size:0.9em;">Regards,<br />SADBHAVAN APP</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-          <p>SADHBHAVANA APP</p>
+          <p>SADBHAVAN APP</p>
         </div>
       </div>
     </div>`
@@ -355,7 +356,7 @@ const verifyOTP = async (req, res) => {
 
     // Step 6: Send Response
     const token = jwt.sign({ userId: user._id }, jwtSecret, {
-       expiresIn: "36500d",
+      expiresIn: "36500d",
     });
     await sendMail(
       user.email,
@@ -364,16 +365,16 @@ const verifyOTP = async (req, res) => {
       `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
       <div style="margin:50px auto;width:70%;padding:20px 0">
         <div style="border-bottom:1px solid #eee">
-          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADHBHAVANA APP</a>
+          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADBHAVAN APP</a>
         </div>
         <p style="font-size:1.1em">Hi ${user.name},</p>
-        <p>WELCOME TO SADHBHAVANA APP. Thank you for choosing SADHBHAVANA APP.</p>
+        <p>WELCOME TO SADBHAVAN APP. Thank you for choosing SADBHAVAN APP.</p>
         <p>Congratulations Your Account has been created successfully</p>
         
-        <p style="font-size:0.9em;">Regards,<br />SADHBHAVANA APP</p>
+        <p style="font-size:0.9em;">Regards,<br />SADBHAVAN APP</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-          <p>SADHBHAVANA APP</p>
+          <p>SADBHAVAN APP</p>
         </div>
       </div>
     </div>`
@@ -502,16 +503,16 @@ const forgotPassword = async (req, res) => {
       `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
       <div style="margin:50px auto;width:70%;padding:20px 0">
         <div style="border-bottom:1px solid #eee">
-          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADHBHAVANA APP</a>
+          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADBHAVAN APP</a>
         </div>
         <p style="font-size:1.1em">Hi ${user.name},</p>
         <p>We have received a request to reset your password. Use the following OTP to reset your password. OTP is valid for 20 minutes</p>
         <p>Please do not share this OTP with anyone.</p>
         <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
-        <p style="font-size:0.9em;">Regards,<br />SADHBHAVANA APP</p>
+        <p style="font-size:0.9em;">Regards,<br />SADBHAVAN APP</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-          <p>SADHBHAVANA APP</p>
+          <p>SADBHAVAN APP</p>
         </div>
       </div>
     </div>`
@@ -561,7 +562,7 @@ const verifyForgotPasswordOTP = async (req, res) => {
 
     // Step 5: Generate JWT
     const token = jwt.sign({ userId: user._id }, jwtSecret, {
-       expiresIn: "36500d",
+      expiresIn: "36500d",
     });
     // Step 5: Send Response
     res.status(200).json({ token: token });
@@ -587,7 +588,7 @@ const createIdCard = async (req, res) => {
     const ctx = canvas.getContext("2d");
 
     // Load and draw the background image
-    const backgroundImage = await loadImage(process.env.DOMAIN+'/idcard1.jpg');
+    const backgroundImage = await loadImage(process.env.DOMAIN + '/idcard1.jpg');
     ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
     // Draw white background if needed for additional fields
@@ -604,14 +605,14 @@ const createIdCard = async (req, res) => {
     ctx.fillText(`Name: ${user.name}`, 220, 120);
     ctx.fillText(`Email: ${user.email}`, 220, 140);
     ctx.fillText(`Phone: ${user.phoneNumber}`, 220, 160);
-      const userDateOfBirth = user.date_of_birth.toString(); // Convert to string if it's a Date object
+    const userDateOfBirth = user.date_of_birth.toString(); // Convert to string if it's a Date object
 
-// Extract only the date part without the time component
-const dateObject = new Date(userDateOfBirth);
-const formattedDate = dateObject.toDateString();
+    // Extract only the date part without the time component
+    const dateObject = new Date(userDateOfBirth);
+    const formattedDate = dateObject.toDateString();
 
-// Use this `formattedDate` variable in your ctx.fillText for DOB
-ctx.fillText(`DOB: ${formattedDate}`, 220, 180);
+    // Use this `formattedDate` variable in your ctx.fillText for DOB
+    ctx.fillText(`DOB: ${formattedDate}`, 220, 180);
 
 
     // if (user.blood_group) {
@@ -620,7 +621,7 @@ ctx.fillText(`DOB: ${formattedDate}`, 220, 180);
     // Add additional fields like District and Panchayat if they exist in the User model
     if (user.district) {
       ctx.fillText(`District: ${user.district}`, 220, 200);
-    }  
+    }
     // if (user.union) {
     //   ctx.fillText(`Union: ${user.union}`, 220, 220);
     // }
@@ -679,7 +680,7 @@ const AddFeedBack = async (req, res) => {
 const googleLogin = async (req, res) => {
   try {
     const { token } = req.body;
-  console.log(token,"google")
+    console.log(token, "google")
     if (!token) {
       return res.status(400).json({ error: "ID token not provided." });
     }
@@ -693,7 +694,7 @@ const googleLogin = async (req, res) => {
     const tokenNew = jwt.sign({ userId: user._id }, jwtSecret, {
       expiresIn: "36500d",
     });
-console.log(tokenNew)
+    console.log(tokenNew)
     res
       .status(200)
       .json({ token: tokenNew, user: { id: user._id, name: user.name } });
@@ -729,7 +730,7 @@ const autoLogin = async (req, res) => {
         }),
       }
     );
-      console.log(response)
+    console.log(response)
     if (!response.ok) {
       throw new Error("Failed to fetch data from STORE_URL");
     }
@@ -820,7 +821,7 @@ const addVote = async (req, res) => {
 
 const updateProfileImage = async (req, res) => {
   try {
-    const profileImage  = req.file;
+    const profileImage = req.file;
     const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(400).json({ error: "User not found" });
@@ -836,7 +837,7 @@ const updateProfileImage = async (req, res) => {
 const appleLogin = async (req, res) => {
   try {
     const { token } = req.body;
-    console.log(token,"apple")
+    console.log(token, "apple")
     if (!token) {
       return res.status(400).json({ error: "ID token not provided." });
     }
@@ -861,15 +862,15 @@ const appleLogin = async (req, res) => {
 
 const storeNotificationToken = async (req, res) => {
   try {
-  const { FCMToken } = req.body;
-  const notification = await Notification.findOne({ token:FCMToken  }); 
-  if(!notification){
-    const notification = await Notification.create({ token: FCMToken, userId: req.user.userId });
-    res.status(200).json({ notification });
-  }else{
-    res.status(200).json({ notification });
-  }
-  }catch(error){
+    const { FCMToken } = req.body;
+    const notification = await Notification.findOne({ token: FCMToken });
+    if (!notification) {
+      const notification = await Notification.create({ token: FCMToken, userId: req.user.userId });
+      res.status(200).json({ notification });
+    } else {
+      res.status(200).json({ notification });
+    }
+  } catch (error) {
     console.error("Error during token store:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
@@ -877,7 +878,7 @@ const storeNotificationToken = async (req, res) => {
 const getPaymentDetailsWithDay = async (req, res) => {
   try {
     const { day } = req.params;
-    
+
     // Calculate the start date based on the provided day count
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - day);
@@ -895,7 +896,150 @@ const getPaymentDetailsWithDay = async (req, res) => {
   }
 };
 
+const registerAsVolunteer = async (req, res) => {
+  try {
+    const {
+      wardNo,
+      booth,
+      aadhaarNo,
+      madalamPresident,
+      address,
+      mandalamMember,
+      district,
+      constituency,
+      assembly,
+      boothRule,
+    } = req.body;
 
+    const imageObjs = req.files;
+
+    if (!booth || !district || !constituency || !assembly) {
+      return res.status(400).json({ error: "Please provide all details" });
+    }
+
+    const user = await User.findById(req.user.userId);
+    if(user.volunteer.applied){
+      return res.status(400).json({ error: "Already Applied" });
+    }
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    const images = [];
+
+    if (imageObjs) {
+      for (let i = 0; i < imageObjs.length; i++) {
+        images.push(`${process.env.DOMAIN}/aadhaarImage/${imageObjs[i].filename}`);
+      }
+    }
+
+    // If details added
+   const volunteer = {
+      wardNo: wardNo || "",
+      booth,
+      district,
+      constituency,
+      assembly,
+      aadhaarNo: aadhaarNo || "",
+      madalamPresident: madalamPresident || "",
+      address: address || "",
+      name: user.name,
+      phone: user.phoneNumber,
+      email: user.email,
+      aadhaar: images,
+      mandalamMember: mandalamMember || "",
+      boothRule: boothRule || [],
+    };
+
+    await user.save();
+
+    const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
+      expiresIn: "36500d",
+    });
+
+    try {
+      const axiosResponse = await axios.post(
+        `${process.env.VOLUNTEER_URL}/api/volunteer/register-from-app`,
+        {
+          ...volunteer,
+          dccappuserId: user._id,
+          password: user.password,
+          dccappurl: process.env.DOMAIN,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-access-token": token,
+          },
+        }
+      );
+
+        volunteer.volunteerId = axiosResponse.data.volunteerId;
+        
+    } catch (error) {
+      // If the registration fails, you might want to handle it appropriately.
+      return res.status(400).json({ error: "Registration failed" });
+    }
+    volunteer.applied = true;
+    volunteer.status = false;
+   const updatedUser = await User.findByIdAndUpdate(
+    req.user.userId,
+     {
+       $set: {
+         volunteer: volunteer,
+
+       }
+     }
+   )
+      if(!updatedUser) {
+        return res.status(400).json({ error: "User not found" });
+      }
+    res.status(200).json({message: "Registered Successfully"});
+  } catch (error) {
+    console.error("Error during registration as a volunteer:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+const verifyVolunteer = async (req, res) => {
+  try {
+    const user = await User.findById(req.body.id);
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    user.volunteer.applied = true;
+    user.volunteer.status = true;
+    user.save();
+    res.status(200).json({ message: "Verified Successfully" });
+  } catch (error) {
+    console.error("Error during registration as volunteer:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+const disQualifyVolunteer = async (req, res) => {
+  try {
+   const updateUser = await User.findByIdAndUpdate(
+    req.body.id,
+     {
+       $set: {
+         volunteer: {
+           status: false,
+           applied: false
+         }
+       }
+     }
+   )
+      if(!updateUser) {
+        return res.status(400).json({ error: "User not found" });
+      }
+    res.status(200).json({ message: "Disqualified Successfully" });
+  }
+  catch (error) {
+    console.error("Error during registration as volunteer:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 module.exports = {
   register,
   login,
@@ -920,5 +1064,8 @@ module.exports = {
   updateProfileImage,
   appleLogin,
   storeNotificationToken,
-  getPaymentDetailsWithDay
+  getPaymentDetailsWithDay,
+  registerAsVolunteer,
+  verifyVolunteer,
+  disQualifyVolunteer
 };
