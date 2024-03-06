@@ -1695,6 +1695,22 @@ const deleteVideogallery = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const deleteSocialMediaDetails= async (req, res) => {
+    try {
+        const {socialId,itemId} = req.params;
+        const social = await SocialMedia.findById(socialId);
+        if (!social) {
+            return res.status(404).json({ error: "Social media not found" });
+        }
+        social.socialMediaSchema.splice(itemId, 1);
+        await social.save();
+        res.status(200).json({ msg: "Social media removed" });
+    } catch (error) {
+        console.error("Error deleting social media:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+    }
+
 
 module.exports = {
     adminLogin,
@@ -1760,5 +1776,6 @@ module.exports = {
     getVideogallery,
     deleteVideogallery,
     addSocialMediaDetails,
-    getSocialMediaDetails
+    getSocialMediaDetails,
+    deleteSocialMediaDetails
 }

@@ -305,5 +305,5 @@ router.delete('/delete-notification/:id',adminAuth,adminController.deleteNotific
 router.delete('/delete-videogallery/:id',adminAuth,adminController.deleteVideogallery);
 router.delete('/reels/:id',adminAuth,adminController.deleteReels);
 router.delete('/meme/:id',adminAuth,adminController.deleteMeme);
-
+router.delete('/delete-social-media-details/:socialId/:itemId',adminAuth,adminController.deleteSocialMediaDetails);
 module.exports = router;
