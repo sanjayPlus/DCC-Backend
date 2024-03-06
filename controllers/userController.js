@@ -898,23 +898,40 @@ const getPaymentDetailsWithDay = async (req, res) => {
 
 const registerAsVolunteer = async (req, res) => {
   try {
-   const  {wardNo,booth,aadhaarNo,madalamPresident,address,mandalamMember,district,constituency,assembly,boothRule} = req.body;
+    const {
+      wardNo,
+      booth,
+      aadhaarNo,
+      madalamPresident,
+      address,
+      mandalamMember,
+      district,
+      constituency,
+      assembly,
+      boothRule,
+    } = req.body;
+
     const imageObjs = req.files;
-    if( !booth ||  !district || !constituency || !assembly){
+
+    if (!booth || !district || !constituency || !assembly) {
       return res.status(400).json({ error: "Please provide all details" });
     }
+
     const user = await User.findById(req.user.userId);
+
     if (!user) {
       return res.status(400).json({ error: "User not found" });
     }
-    const images = [];
-    if(imageObjs){
 
+    const images = [];
+
+    if (imageObjs) {
       for (let i = 0; i < imageObjs.length; i++) {
         images.push(`${process.env.DOMAIN}/aadhaarImage/${imageObjs[i].filename}`);
       }
     }
-    //if details added
+
+    // If details added
     user.volunteer = {
       wardNo: wardNo || "",
       booth,
@@ -922,43 +939,47 @@ const registerAsVolunteer = async (req, res) => {
       constituency,
       assembly,
       aadhaarNo: aadhaarNo || "",
-      madalamPresident:madalamPresident || "",
-      address:address || "",
+      madalamPresident: madalamPresident || "",
+      address: address || "",
       name: user.name,
       phone: user.phoneNumber,
       email: user.email,
-      aadhaar:images,
+      aadhaar: images,
       mandalamMember: mandalamMember || "",
-      boothRule:boothRule || [],
+      boothRule: boothRule || [],
+    };
 
-    }
     const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
       expiresIn: "36500d",
-    })
-    axios.post(`${process.env.VOLUNTEER_URL}/api/volunteer/register-from-app`, {
+    });
+
+    const axiosResponse = await axios.post(
+      `${process.env.VOLUNTEER_URL}/api/volunteer/register-from-app`,
+      {
         ...user.volunteer,
         dccappuserId: user._id,
         password: user.password,
-        dccappurl:process.env.DOMAIN
-    },{
-      headers: {
-        "x-access-token": token
+        dccappurl: process.env.DOMAIN,
+      },
+      {
+        headers: {
+          "x-access-token": token,
+        },
       }
-    }).then(res=>{
-      console.log(res)
-    }).catch(err=>{
-      console.log(err)
-    })
-    user.volunteer.volunteerId = res.data._id;
+    );
+
+    user.volunteer.volunteerId = axiosResponse.data._id;
     user.volunteer.applied = true;
 
-    user.save()
+    await user.save();
+
     res.status(200).json({ user });
   } catch (error) {
-    console.error("Error during registration as volunteer:", error.message);
+    console.error("Error during registration as a volunteer:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
+
 const verifyVolunteer = async (req, res) => {
   try {
     const user = await User.findById(req.body.id);
