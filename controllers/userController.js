@@ -968,8 +968,8 @@ const registerAsVolunteer = async (req, res) => {
         },
       }
     );
-
-    user.volunteer.volunteerId = axiosResponse.data._id;
+console.log(axiosResponse.data)
+    // user.volunteer.volunteerId = axiosResponse.data._id;
     user.volunteer.applied = true;
 
     await user.save();
