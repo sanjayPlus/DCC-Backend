@@ -918,7 +918,9 @@ const registerAsVolunteer = async (req, res) => {
     }
 
     const user = await User.findById(req.user.userId);
-
+    if(user.volunteer.applied){
+      return res.status(400).json({ error: "Already Applied" });
+    }
     if (!user) {
       return res.status(400).json({ error: "User not found" });
     }
@@ -978,7 +980,8 @@ const registerAsVolunteer = async (req, res) => {
       // If the registration fails, you might want to handle it appropriately.
       return res.status(400).json({ error: "Registration failed" });
     }
-
+    volunteer.applied = true;
+    volunteer.status = false;
    const updatedUser = await User.findByIdAndUpdate(
     req.user.userId,
      {
@@ -1016,13 +1019,20 @@ const verifyVolunteer = async (req, res) => {
 }
 const disQualifyVolunteer = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
-    if (!user) {
-      return res.status(400).json({ error: "User not found" });
-    }
-    user.volunteer.applied = false;
-    user.volunteer.status = false;
-    user.save();
+   const updateUser = await User.findByIdAndUpdate(
+    req.body.id,
+     {
+       $set: {
+         volunteer: {
+           status: false,
+           applied: false
+         }
+       }
+     }
+   )
+      if(!updateUser) {
+        return res.status(400).json({ error: "User not found" });
+      }
     res.status(200).json({ message: "Disqualified Successfully" });
   }
   catch (error) {
