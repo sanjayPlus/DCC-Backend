@@ -25,6 +25,7 @@ const cron = require('node-cron');
 const moment  =  require('moment');
 const Meme = require("../models/Meme");
 const Reels = require("../models/Reels");
+const Leadership = require("../models/Leadership");
 const cronExpression = '0 0 * * *';
 
 const myCronJob = cron.schedule(cronExpression, async () => {
@@ -1711,7 +1712,48 @@ const deleteSocialMediaDetails= async (req, res) => {
     }
     }
 
+const addLeadership = async (req, res) => {
+    try {
+        const { name, position, address,email,phone,category } = req.body;
+        const imageObj = req.file;
+        const newLeadership = await Leadership.create({
+            name: name,
+            position: position,
+            address: address,
+            email: email,
+            phone: phone,
+            image: `${process.env.DOMAIN}/leadershipImage/${imageObj.filename}`,
+            category: category
+        })
+            res.status(200).json(newLeadership);
+    } catch (error) {
+        console.error("Error deleting social media:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });     
+    }
+}
+const getLeadership = async (req, res) => {
+    try {
+        const { category } = req.query;
+        const leadership = await Leadership.findOne({ category: category });
+        res.status(200).json(leadership);
 
+    }catch (error) {
+        console.error("Error deleting social media:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const deleteLeadership = async (req, res) => {
+    try {
+        const leadership = await Leadership.findOneAndDelete({_id:req.params.id});
+        if (!leadership) {
+        return res.status(404).json({ error: "Leadership not found" });
+        }
+        res.status(200).json({ msg: "Leadership removed" });
+    }catch (error) {
+        console.error("Error deleting leadership:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports = {
     adminLogin,
     adminRegister,
@@ -1777,5 +1819,8 @@ module.exports = {
     deleteVideogallery,
     addSocialMediaDetails,
     getSocialMediaDetails,
-    deleteSocialMediaDetails
+    deleteSocialMediaDetails,
+    addLeadership,
+    getLeadership,
+    deleteLeadership
 }
