@@ -256,8 +256,28 @@ const leaderImage = multer({
     fileSize: 20 * 1024 * 1024, // 20MB in bytes
   },
 });
+const developerStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/developerImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
+// Configure storage engine instead of dest object.
+const developerImage = multer({
+  storage: developerStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
 router.post('/login',adminController.adminLogin);
- router.post('/register',adminController.adminRegister);
 router.get('/user/:id',adminAuth,adminController.getUser);
 router.get('/users',adminAuth,adminController.getAllUsers);    
 router.get("/calendar-events/:date",adminController.getCalendarEvents)
@@ -276,6 +296,7 @@ router.get('/districtV3',adminController.getDistrictV3);
 router.get('/districtV4',adminController.getDistrictV4);
 router.get('/notifications',adminController.getNotifications);
 router.get('/get-social-media',adminController.getSocialMediaDetails);
+router.get('/developers',adminController.getDevelopers);
 
 router.get('/videogallery',adminController.getVideogallery);
 router.get('/reels',adminController.getReels);
@@ -313,6 +334,7 @@ router.post('/add-category',adminAuth,adminController.addCategory);
 router.post('/add-social-media-details',socialMediaImage.single('image'),adminAuth,adminController.addSocialMediaDetails);
 router.post('/add-leadership',leaderImage.single('image'),adminAuth,adminController.addLeadership);
 router.post('/update-social-media-details/:socialId/:itemId',adminAuth,socialMediaImage.single('image'),adminAuth,adminController.updateSocialMediaDetails);
+router.post('/add-developer',developerImage.single('image'),adminAuth,adminController.addDeveloper);
 
 router.delete('/user/:id',adminAuth,adminController.deleteUser);
 router.delete('/deleteImage/:id',adminAuth,adminController.deleteImage);
@@ -329,4 +351,5 @@ router.delete('/reels/:id',adminAuth,adminController.deleteReels);
 router.delete('/meme/:id',adminAuth,adminController.deleteMeme);
 router.delete('/delete-social-media-details/:socialId/:itemId',adminAuth,adminController.deleteSocialMediaDetails);
 router.delete('/delete-leadership/:id',adminAuth,adminController.deleteLeadership);
+router.delete('/delete-developer/:id',adminAuth,adminController.deleteDeveloper);
 module.exports = router;
