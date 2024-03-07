@@ -25,6 +25,7 @@ const cron = require('node-cron');
 const moment  =  require('moment');
 const Meme = require("../models/Meme");
 const Reels = require("../models/Reels");
+const Leadership = require("../models/Leadership");
 const cronExpression = '0 0 * * *';
 
 const myCronJob = cron.schedule(cronExpression, async () => {
@@ -1604,13 +1605,16 @@ const addSocialMediaDetails = async (req, res) => {
         //  if(!name || !image || !facebook || !instagram || !youtube || !position || !category) {
         //      return res.status(400).json({ error: "All fields are required" });   
         //  }
-        // Find the category with the provided name
-        const existingCategory = await SocialMedia.findOne({ category: category });
-
-        // If category not found
+        //find a category if not exist then create one
+        let existingCategory = await SocialMedia.findOne({ category });
         if (!existingCategory) {
-            return res.status(404).json({ error: "Category not found" });
+            const newCategory = new SocialMedia({
+                category,
+            })
+            await newCategory.save();
+            existingCategory = newCategory;
         }
+        
         // Create a new social media details
         const newSocialMediaDetails = {
             name: name,
@@ -1711,7 +1715,51 @@ const deleteSocialMediaDetails= async (req, res) => {
     }
     }
 
-
+const addLeadership = async (req, res) => {
+    try {
+        const { name, position, address,email,phone,category } = req.body;
+        const imageObj = req.file;
+        const newLeadership = await Leadership.create({
+            name: name,
+            position: position,
+            address: address,
+            email: email,
+            phone: phone,
+            image: `${process.env.DOMAIN}/leadershipImage/${imageObj.filename}`,
+            category: category
+        })
+            res.status(200).json(newLeadership);
+    } catch (error) {
+        console.error("Error deleting social media:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });     
+    }
+}
+const getLeadership = async (req, res) => {
+    try {
+        const { category } = req.query;
+        let query = {}
+        if (category) {
+            query = { category: category };
+        }
+        const leadership = await Leadership.find(query);
+        res.status(200).json(leadership);
+    }catch (error) {
+        console.error("Error deleting social media:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const deleteLeadership = async (req, res) => {
+    try {
+        const leadership = await Leadership.findOneAndDelete({_id:req.params.id});
+        if (!leadership) {
+        return res.status(404).json({ error: "Leadership not found" });
+        }
+        res.status(200).json({ msg: "Leadership removed" });
+    }catch (error) {
+        console.error("Error deleting leadership:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports = {
     adminLogin,
     adminRegister,
@@ -1778,4 +1826,7 @@ module.exports = {
     addSocialMediaDetails,
     getSocialMediaDetails,
     deleteSocialMediaDetails,
+    addLeadership,
+    getLeadership,
+    deleteLeadership
 }
