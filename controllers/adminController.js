@@ -1661,6 +1661,53 @@ const getSocialMediaDetails = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+// update social media details
+const updateSocialMediaDetails = async (req, res) => {
+    try {
+        const { name, facebook, instagram, youtube, position } = req.body;
+        const imageObj = req.file;
+        const { socialId, itemId } = req.params;
+        const newSocialMediaDetails = await SocialMedia.findById(socialId);
+        if (!newSocialMediaDetails) {
+            return res.status(404).json({ error: "Social media details not found" });
+        }
+        const existingCategoryIndex = newSocialMediaDetails.socialMediaSchema.findIndex(item => item._id.toString() === itemId);
+
+        if (existingCategoryIndex === -1) {
+            return res.status(404).json({ error: "Social media category not found" });
+        }
+
+        const existingCategory = newSocialMediaDetails.socialMediaSchema[existingCategoryIndex];
+
+        if (name) {
+            existingCategory.name = name;
+        }
+        if (facebook) {
+            existingCategory.facebook = facebook;
+        }
+        if (instagram) {
+            existingCategory.instagram = instagram;
+        }
+        if (youtube) {
+            existingCategory.youtube = youtube;
+        }
+        if (position) {
+            existingCategory.position = position;
+        }
+        if (imageObj) {
+            existingCategory.image = `${process.env.DOMAIN}/socialMediaImage/${imageObj.filename}`;
+        }
+
+        newSocialMediaDetails.socialMediaSchema[existingCategoryIndex] = existingCategory;
+        await newSocialMediaDetails.save();
+
+        res.status(200).json({ message: "Social media details updated successfully" });
+
+    } catch (error) {
+        console.error("Error updating social media details:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 
 const AddVideogallery = async (req, res) => {
     try {
@@ -1826,6 +1873,7 @@ module.exports = {
     addSocialMediaDetails,
     getSocialMediaDetails,
     deleteSocialMediaDetails,
+    updateSocialMediaDetails,
     addLeadership,
     getLeadership,
     deleteLeadership

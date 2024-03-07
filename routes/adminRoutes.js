@@ -311,6 +311,7 @@ router.post('/delete-municipality',adminAuth,adminController.deleteMunicipality)
 router.post('/add-category',adminAuth,adminController.addCategory);
 router.post('/add-social-media-details',socialMediaImage.single('image'),adminAuth,adminController.addSocialMediaDetails);
 router.post('/add-leadership',leaderImage.single('image'),adminAuth,adminController.addLeadership);
+router.post('/update-social-media-details/:socialId/:itemId',adminAuth,socialMediaImage.single('image'),adminAuth,adminController.updateSocialMediaDetails);
 
 router.delete('/user/:id',adminAuth,adminController.deleteUser);
 router.delete('/deleteImage/:id',adminAuth,adminController.deleteImage);
