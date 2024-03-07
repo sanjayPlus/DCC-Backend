@@ -1655,7 +1655,7 @@ const getSocialMediaDetails = async (req, res) => {
         }
 
         // Respond with the social media details
-        res.status(200).json({ socialMediaDetails: existingCategory[0].socialMediaSchema });
+        res.status(200).json(existingCategory[0]);
     } catch (error) {
         console.error("Error getting social media details:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
