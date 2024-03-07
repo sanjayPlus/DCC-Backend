@@ -281,6 +281,7 @@ router.get('/videogallery',adminController.getVideogallery);
 router.get('/reels',adminController.getReels);
 router.get('/meme',adminController.getMeme);
 router.get('/leadership',adminController.getLeadership);
+router.get('/get-social-media/:socialId/:itemId',adminController.getSocialMediaDetailsById);
 
 router.post('/gallery',galleryImage.single('image'),adminAuth,adminController.addGallery);
 router.post('/meme',memeImage.single('image'),adminAuth,adminController.addGallery);

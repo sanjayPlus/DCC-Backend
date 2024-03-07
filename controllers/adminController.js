@@ -1807,6 +1807,20 @@ const deleteLeadership = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const getSocialMediaDetailsById = async (req, res) => {
+    try {
+        const {socialId,itemId} = req.params;
+        const social = await SocialMedia.findById(socialId);
+        if (!social) {
+            return res.status(404).json({ error: "Social media not found" });
+        }
+        const item = social.socialMediaSchema.filter((item) => item._id == itemId);
+        res.status(200).json(item);
+    }catch(error) {
+        console.error("Error deleting leadership:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports = {
     adminLogin,
     adminRegister,
@@ -1874,6 +1888,7 @@ module.exports = {
     getSocialMediaDetails,
     deleteSocialMediaDetails,
     updateSocialMediaDetails,
+    getSocialMediaDetailsById,
     addLeadership,
     getLeadership,
     deleteLeadership
