@@ -1605,13 +1605,16 @@ const addSocialMediaDetails = async (req, res) => {
         //  if(!name || !image || !facebook || !instagram || !youtube || !position || !category) {
         //      return res.status(400).json({ error: "All fields are required" });   
         //  }
-        // Find the category with the provided name
-        const existingCategory = await SocialMedia.findOne({ category: category });
-
-        // If category not found
+        //find a category if not exist then create one
+        const existingCategory = await SocialMedia.findOne({ category });
         if (!existingCategory) {
-            return res.status(404).json({ error: "Category not found" });
+            const newCategory = new SocialMedia({
+                category,
+            })
+            await newCategory.save();
+            existingCategory = newCategory;
         }
+        
         // Create a new social media details
         const newSocialMediaDetails = {
             name: name,
