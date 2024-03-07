@@ -1606,7 +1606,7 @@ const addSocialMediaDetails = async (req, res) => {
         //      return res.status(400).json({ error: "All fields are required" });   
         //  }
         //find a category if not exist then create one
-        const existingCategory = await SocialMedia.findOne({ category });
+        let existingCategory = await SocialMedia.findOne({ category });
         if (!existingCategory) {
             const newCategory = new SocialMedia({
                 category,
