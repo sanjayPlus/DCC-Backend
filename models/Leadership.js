@@ -25,6 +25,9 @@ const leadershipSchema = new mongoose.Schema({
     category:{
         type:String,
     },
+    link:{
+        type:String,
+    },
     createdAt: {
         type: Date,
         default: Date.now,

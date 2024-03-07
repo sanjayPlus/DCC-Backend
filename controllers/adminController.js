@@ -1765,7 +1765,7 @@ const deleteSocialMediaDetails = async (req, res) => {
 
 const addLeadership = async (req, res) => {
     try {
-        const { name, position, address, email, phone, category } = req.body;
+        const { name, position, address, email, phone, category,link } = req.body;
         const imageObj = req.file;
         const newLeadership = await Leadership.create({
             name: name,
@@ -1774,7 +1774,8 @@ const addLeadership = async (req, res) => {
             email: email,
             phone: phone,
             image: `${process.env.DOMAIN}/leadershipImage/${imageObj.filename}`,
-            category: category
+            category: category,
+            link: link
         })
         res.status(200).json(newLeadership);
     } catch (error) {
