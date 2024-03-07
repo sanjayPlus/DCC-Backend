@@ -1738,9 +1738,8 @@ const getLeadership = async (req, res) => {
         if (category) {
             query = { category: category };
         }
-        const leadership = await Leadership.findOne(query);
+        const leadership = await Leadership.find(query);
         res.status(200).json(leadership);
-
     }catch (error) {
         console.error("Error deleting social media:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
