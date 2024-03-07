@@ -13,7 +13,7 @@ const leadershipSchema = new mongoose.Schema({
     image: {
         type: String,
     },
-    postion: {
+    position: {
         type: String,
     },
     phone: {
