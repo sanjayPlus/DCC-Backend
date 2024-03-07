@@ -1734,7 +1734,11 @@ const addLeadership = async (req, res) => {
 const getLeadership = async (req, res) => {
     try {
         const { category } = req.query;
-        const leadership = await Leadership.findOne({ category: category });
+        let query = {}
+        if (category) {
+            query = { category: category };
+        }
+        const leadership = await Leadership.findOne(query);
         res.status(200).json(leadership);
 
     }catch (error) {
