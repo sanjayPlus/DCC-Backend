@@ -1614,7 +1614,7 @@ const addSocialMediaDetails = async (req, res) => {
         // Create a new social media details
         const newSocialMediaDetails = {
             name: name,
-             image: `${process.env.DOMAIN}/socialMediaImage/${imageObj.filename}`,
+            image: `${process.env.DOMAIN}/socialMediaImage/${imageObj.filename}`,
             facebook: facebook,
             instagram: instagram,
             youtube: youtube,
@@ -1777,5 +1777,5 @@ module.exports = {
     deleteVideogallery,
     addSocialMediaDetails,
     getSocialMediaDetails,
-    deleteSocialMediaDetails
+    deleteSocialMediaDetails,
 }
