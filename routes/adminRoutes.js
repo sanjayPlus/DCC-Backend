@@ -303,6 +303,7 @@ router.get('/reels',adminController.getReels);
 router.get('/meme',adminController.getMeme);
 router.get('/leadership',adminController.getLeadership);
 router.get('/get-social-media/:socialId/:itemId',adminController.getSocialMediaDetailsById);
+router.get('/get-social-category',adminController.getCategorySocialMedia);
 
 router.post('/gallery',galleryImage.single('image'),adminAuth,adminController.addGallery);
 router.post('/meme',memeImage.single('image'),adminAuth,adminController.addGallery);
@@ -330,7 +331,7 @@ router.post('/delete-assembly',adminAuth,adminController.deleteAssembly);
 router.post('/delete-panchayath',adminAuth,adminController.deletePanchayath);
 router.post('/delete-corporation',adminAuth,adminController.deleteCorporation);
 router.post('/delete-municipality',adminAuth,adminController.deleteMunicipality);
-router.post('/add-category',adminAuth,adminController.addCategory);
+router.post('/add-social-category',adminAuth,adminController.addCategoryForSocialMedia);
 router.post('/add-social-media-details',socialMediaImage.single('image'),adminAuth,adminController.addSocialMediaDetails);
 router.post('/add-leadership',leaderImage.single('image'),adminAuth,adminController.addLeadership);
 router.post('/update-social-media-details/:socialId/:itemId',adminAuth,socialMediaImage.single('image'),adminAuth,adminController.updateSocialMediaDetails);
@@ -350,6 +351,7 @@ router.delete('/delete-videogallery/:id',adminAuth,adminController.deleteVideoga
 router.delete('/reels/:id',adminAuth,adminController.deleteReels);
 router.delete('/meme/:id',adminAuth,adminController.deleteMeme);
 router.delete('/delete-social-media-details/:socialId/:itemId',adminAuth,adminController.deleteSocialMediaDetails);
+router.delete('/delete-social-category/:category',adminAuth,adminController.deleteCategorySocialMedia);
 router.delete('/delete-leadership/:id',adminAuth,adminController.deleteLeadership);
 router.delete('/delete-developer/:id',adminAuth,adminController.deleteDeveloper);
 module.exports = router;

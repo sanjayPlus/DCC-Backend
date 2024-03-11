@@ -13,6 +13,7 @@ const Poll = require("../models/Poll");
 const Notification = require("../models/Notification");
 const Payment = require("../models/Payment");
 const axios = require("axios");
+const svgGenerator = require("../helpers/svgGenerator");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -1040,6 +1041,25 @@ const disQualifyVolunteer = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+const generateLogoId = async (req, res) => {
+  try {
+    
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    if(!user.volunteer.status){
+      return res.status(400).json({ error: "Already Applied" });
+    }
+    const svg = svgGenerator(user.volunteer.booth, user.volunteer.district, user.volunteer.constituency,user.volunteer.assembly);
+    const buffer = Buffer.from(svg);
+    const base64String = buffer.toString("base64");
+    res.status(200).json(base64String);
+  } catch (error) {
+    console.error("Error during registration as volunteer:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 module.exports = {
   register,
   login,
@@ -1067,5 +1087,6 @@ module.exports = {
   getPaymentDetailsWithDay,
   registerAsVolunteer,
   verifyVolunteer,
-  disQualifyVolunteer
+  disQualifyVolunteer,
+  generateLogoId
 };
