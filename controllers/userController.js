@@ -910,6 +910,7 @@ const registerAsVolunteer = async (req, res) => {
       constituency,
       assembly,
       boothRule,
+      power
     } = req.body;
 
     const imageObjs = req.files;
@@ -950,6 +951,7 @@ const registerAsVolunteer = async (req, res) => {
       aadhaar: images,
       mandalamMember: mandalamMember || "",
       boothRule: boothRule || [],
+      power:power,
     };
 
     await user.save();
@@ -1005,13 +1007,20 @@ const registerAsVolunteer = async (req, res) => {
 
 const verifyVolunteer = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
-    if (!user) {
-      return res.status(400).json({ error: "User not found" });
-    }
-    user.volunteer.applied = true;
-    user.volunteer.status = true;
-    user.save();
+    const updateUser = await User.findByIdAndUpdate(
+      req.body.id,
+       {
+         $set: {
+           volunteer: {
+             status: true,
+             applied: true
+           }
+         }
+       }
+    )
+      if(!updateUser) {
+        return res.status(400).json({ error: "User not found" });
+      }
     res.status(200).json({ message: "Verified Successfully" });
   } catch (error) {
     console.error("Error during registration as volunteer:", error.message);
