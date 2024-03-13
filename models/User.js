@@ -144,8 +144,8 @@ const userSchema = new mongoose.Schema({
       default: ""
     },
     boothRule: {
-      type: String,
-      default: ""
+      type: Array,
+      default: []
     },
     applied: {
       type: Boolean,

@@ -910,7 +910,7 @@ const registerAsVolunteer = async (req, res) => {
       constituency,
       assembly,
       boothRule,
-      power
+      power,
     } = req.body;
 
     const imageObjs = req.files;
@@ -920,11 +920,13 @@ const registerAsVolunteer = async (req, res) => {
     }
 
     const user = await User.findById(req.user.userId);
-    if(user.volunteer.applied){
-      return res.status(400).json({ error: "Already Applied" });
-    }
+
     if (!user) {
       return res.status(400).json({ error: "User not found" });
+    }
+
+    if (user.volunteer.applied) {
+      return res.status(400).json({ error: "Already Applied" });
     }
 
     const images = [];
@@ -936,7 +938,7 @@ const registerAsVolunteer = async (req, res) => {
     }
 
     // If details added
-   const volunteer = {
+    const volunteer = {
       wardNo: wardNo || "",
       booth,
       district,
@@ -950,8 +952,9 @@ const registerAsVolunteer = async (req, res) => {
       email: user.email,
       aadhaar: images,
       mandalamMember: mandalamMember || "",
-      boothRule: boothRule || [],
-      power:power,
+      boothRule: boothRule || [], // Assuming boothRule is an array
+      power,
+      volunteerId: "", // initialize volunteerId
     };
 
     const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
@@ -975,30 +978,33 @@ const registerAsVolunteer = async (req, res) => {
         }
       );
 
-        volunteer.volunteerId = axiosResponse.data.volunteerId;
-        
+      volunteer.volunteerId = axiosResponse.data.volunteerId;
     } catch (error) {
-     console.log(error)
+      console.log(error);
     }
+
     volunteer.applied = true;
     volunteer.status = false;
-   const updatedUser = await User.findByIdAndUpdate(
-    req.user.userId,
-     {
-       $set: {
-         volunteer: {
-           ...volunteer,
-           applied: true,
-            status:false
-         },
 
-       }
-     }
-   )
-      if(!updatedUser) {
-        return res.status(400).json({ error: "User not found" });
-      }
-    res.status(200).json({message: "Registered Successfully"});
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.userId,
+      {
+        $set: {
+          volunteer: {
+            ...volunteer,
+            applied: true,
+            status: false,
+          },
+        },
+      },
+      { new: true } // to get the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ message: "Registered Successfully" });
   } catch (error) {
     console.error("Error during registration as a volunteer:", error);
     res.status(500).json({ error: "Internal Server Error" });
