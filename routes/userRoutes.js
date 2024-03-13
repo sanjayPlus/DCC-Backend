@@ -99,6 +99,8 @@ router.post('/add-notification-token',userAuth,userController.storeNotificationT
 router.post('/apply-as-volunteer',aadhaarImages,userAuth,userController.registerAsVolunteer);
 router.post('/verify-volunteer',appServerAuth,userController.verifyVolunteer);
 router.post('/delete-volunteer',appServerAuth,userController.disQualifyVolunteer);
+router.post('/download-logo',userAuth,userController.generateLogoId);
+
 
 //update
 router.put('/update', userAuth, userController.update);

@@ -1586,9 +1586,12 @@ const deleteNotification = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-const addCategory = async (req, res) => {
+const addCategoryForSocialMedia = async (req, res) => {
     try {
         const { category } = req.body;
+        if(!category) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
         const addSocialMedia = await SocialMedia.create({
             category,
         });
@@ -1765,7 +1768,7 @@ const deleteSocialMediaDetails = async (req, res) => {
 
 const addLeadership = async (req, res) => {
     try {
-        const { name, position, address, email, phone, category,link } = req.body;
+        const { name, position, address, email, phone, category, link } = req.body;
         const imageObj = req.file;
         const newLeadership = await Leadership.create({
             name: name,
@@ -1863,6 +1866,32 @@ const deleteDeveloper = async (req, res) => {
     }
 
 }
+const deleteCategorySocialMedia = async (req, res) => {
+    try {
+        const social = await SocialMedia.findOneAndDelete({category: req.params.category});
+        if (!social) {
+            return res.status(404).json({ error: "Social media not found" });
+        }
+        res.status(200).json({ msg: "Social media removed" });
+    }
+    catch (error) {
+        console.error("Error deleting social media:", error.message);
+    }
+}
+const getCategorySocialMedia = async (req, res) => {
+    try {
+        const category = await SocialMedia.find();
+        let categoryList = [];
+        category.forEach((item) => {
+            categoryList.push(item.category)
+        })
+        res.status(200).json(categoryList);
+
+    } catch (error) {
+        console.error("Error deleting social media:", error.message);
+    }
+}
+
 module.exports = {
     adminLogin,
     adminRegister,
@@ -1922,7 +1951,7 @@ module.exports = {
     sendNotificationsToAllDevices,
     getNotifications,
     deleteNotification,
-    addCategory,
+    addCategoryForSocialMedia,
     AddVideogallery,
     getVideogallery,
     deleteVideogallery,
@@ -1936,5 +1965,7 @@ module.exports = {
     deleteLeadership,
     getDevelopers,
     addDeveloper,
-    deleteDeveloper
+    deleteDeveloper,
+    deleteCategorySocialMedia,
+    getCategorySocialMedia
 }
