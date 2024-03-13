@@ -1082,12 +1082,13 @@ const generateLogoId = async (req, res) => {
     const buffer = Buffer.from(svg);
     const base64String = buffer.toString("base64");
 
-    res.status(200).send(`<img src="data:image/svg+xml;base64,${base64String}" alt="Generated Logo">`);
+    res.status(200).json({ svg: base64String });
   } catch (error) {
     console.error("Error generating logo ID:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 module.exports = {
   register,
