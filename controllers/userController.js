@@ -1062,23 +1062,33 @@ const disQualifyVolunteer = async (req, res) => {
 }
 const generateLogoId = async (req, res) => {
   try {
-    
     const user = await User.findById(req.user.userId);
+
     if (!user) {
       return res.status(400).json({ error: "User not found" });
     }
-    if(!user.volunteer.status){
-      return res.status(400).json({ error: "Already Applied" });
+
+    if (!user.volunteer.status) {
+      return res.status(400).json({ error: "Not a volunteer" });
     }
-    const svg = svgGenerator(user.volunteer.booth, user.volunteer.district, user.volunteer.constituency,user.volunteer.assembly);
+
+    const svg = svgGenerator(
+      user.volunteer.booth,
+      user.volunteer.district,
+      user.volunteer.constituency,
+      user.volunteer.assembly
+    );
+
     const buffer = Buffer.from(svg);
     const base64String = buffer.toString("base64");
-    res.status(200).json(base64String);
+
+    res.status(200).send(`<img src="data:image/svg+xml;base64,${base64String}" alt="Generated Logo">`);
   } catch (error) {
-    console.error("Error during registration as volunteer:", error.message);
+    console.error("Error generating logo ID:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
+
 module.exports = {
   register,
   login,
