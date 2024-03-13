@@ -78,6 +78,8 @@ router.get('/auto-login',userAuth,userController.autoLogin);
 router.get('/get-payments/:day',userAuth,userController.getPaymentDetailsWithDay);
 //get liked image list
 router.get('/gallery-likes',userAuth,userController.getGalleryLikes);
+router.get('/download-logo',userAuth,userController.generateLogoId);
+
 router.post('/register', userController.register);
 router.post('/login', userController.login);
 router.post('/sendOTP',userController.sendOTP);
@@ -99,7 +101,7 @@ router.post('/add-notification-token',userAuth,userController.storeNotificationT
 router.post('/apply-as-volunteer',aadhaarImages,userAuth,userController.registerAsVolunteer);
 router.post('/verify-volunteer',appServerAuth,userController.verifyVolunteer);
 router.post('/delete-volunteer',appServerAuth,userController.disQualifyVolunteer);
-router.post('/download-logo',userAuth,userController.generateLogoId);
+
 
 
 //update
