@@ -989,7 +989,11 @@ const registerAsVolunteer = async (req, res) => {
     req.user.userId,
      {
        $set: {
-         volunteer: volunteer,
+         volunteer: {
+           ...volunteer,
+           applied: true,
+            status:false
+         },
 
        }
      }
