@@ -1014,11 +1014,14 @@ const registerAsVolunteer = async (req, res) => {
 
 const verifyVolunteer = async (req, res) => {
   try {
+    const { id } = req.body;
+    const user = await User.findById(id);
     const updateUser = await User.findByIdAndUpdate(
       req.body.id,
        {
          $set: {
            volunteer: {
+          ...user.volunteer,
              status: true,
              applied: true
            }
