@@ -954,8 +954,6 @@ const registerAsVolunteer = async (req, res) => {
       power:power,
     };
 
-    await user.save();
-
     const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
       expiresIn: "36500d",
     });
@@ -980,8 +978,7 @@ const registerAsVolunteer = async (req, res) => {
         volunteer.volunteerId = axiosResponse.data.volunteerId;
         
     } catch (error) {
-      // If the registration fails, you might want to handle it appropriately.
-      return res.status(400).json({ error: "Registration failed" });
+     console.log(error)
     }
     volunteer.applied = true;
     volunteer.status = false;
