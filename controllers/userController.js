@@ -1096,7 +1096,7 @@ const getAssignments = async (req, res) => {
       return res.status(400).json({ error: "User not found" });
     }
     const volunteer = user.volunteer;
-    if(valunteer.status == false){
+    if(volunteer.status == false){
       return res.status(400).json({ error: "Not a volunteer" });
     }
     const volunteerToken = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
@@ -1122,7 +1122,7 @@ const getWhatsapp = async (req, res) => {
       return res.status(400).json({ error: "User not found" });
     }
     const volunteer = user.volunteer;
-    if(valunteer.status == false){
+    if(volunteer.status == false){
       return res.status(400).json({ error: "Not a volunteer" });
     }
     const volunteerToken = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
