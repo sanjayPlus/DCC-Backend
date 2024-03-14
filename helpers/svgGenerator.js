@@ -1,6 +1,5 @@
 const svgGenerator = (booth, district, assembly, mandalam) => {
-        const svg = `
-        <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+        const svg = `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1080" height="1080" viewBox="0 0 1080 1080" xml:space="preserve">
 <desc>Created with Fabric.js 5.2.4</desc>
@@ -27,11 +26,9 @@ const svgGenerator = (booth, district, assembly, mandalam) => {
 <g transform="matrix(0.52 0 0 0.52 463.45 292.74)" style="" id="c491fcc7-b606-4dea-8421-cb60780facde"  >
 		<text xml:space="preserve" font-family="Raleway" font-size="114" font-style="normal" font-weight="900" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(148,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;" ><tspan x="-245.43" y="35.81" >${mandalam}</tspan></text>
 </g>
-</svg>
-        `
+</svg>`
 
-        const svg2 = `
-        <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+        const svg2 = `<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="1080" height="1080" viewBox="0 0 1080 1080" xml:space="preserve">
 <desc>Created with Fabric.js 5.2.4</desc>
@@ -58,8 +55,7 @@ const svgGenerator = (booth, district, assembly, mandalam) => {
 <g transform="matrix(0.52 0 0 0.52 463.45 292.74)" style="" id="c491fcc7-b606-4dea-8421-cb60780facde"  >
 		<text xml:space="preserve" font-family="Arial" font-size="114" font-style="normal" font-weight="900" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(148,0,0); fill-rule: nonzero; opacity: 1; white-space: pre;" ><tspan x="-245.43" y="35.81" >${mandalam}</tspan></text>
 </g>
-</svg>
-        `
+</svg>`
         if (district === "Thiruvananthapuram" && district === "Pathanamthitta") {
 
                 return svg;
