@@ -14,6 +14,10 @@ const Notification = require("../models/Notification");
 const Payment = require("../models/Payment");
 const axios = require("axios");
 const svgGenerator = require("../helpers/svgGenerator");
+const svg2img = require('svg2img');
+const { promisify } = require('util');
+
+const asyncSvg2img = promisify(svg2img);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -1079,10 +1083,20 @@ const generateLogoId = async (req, res) => {
       user.volunteer.assembly
     );
 
-    const buffer = Buffer.from(svg);
-    const base64String = buffer.toString("base64");
+    // Convert SVG to PNG
+    asyncSvg2img(svg, { format: 'png' }, async (error, buffer) => {
+      if (error) {
+        console.error("Error converting SVG to PNG:", error.message);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
 
-    res.status(200).json({ svg: base64String });
+      // Set content type header
+      res.setHeader('Content-Type', 'image/png');
+      // Set content disposition header to force browser to download
+      res.setHeader('Content-Disposition', 'attachment; filename="logo.png"');
+      // Send the PNG data as binary
+      res.status(200).send(buffer);
+    });
   } catch (error) {
     console.error("Error generating logo ID:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
