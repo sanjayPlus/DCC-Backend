@@ -4,6 +4,7 @@ const userController = require('../controllers/userController');
 const userAuth = require('../middleware/userAuth');
 const multer = require("multer");
 const appServerAuth = require('../middleware/appServerAuth');
+const rateLimit = require("express-rate-limit");
 
 const CardStorage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -71,7 +72,15 @@ const CardStorage = multer.diskStorage({
   }).array('aadhaarImages', 2); // Limit to 2 images
   //get
   
-  router.get('/protected', userAuth, userController.protected);
+// Define a rate limiter
+const limiter = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+  max:5, // limit each IP to 40 requests per windowMs
+  message: "Too many requests from this IP, please try again later"
+});
+
+
+router.get('/protected', userAuth, userController.protected);
 router.get('/details', userAuth, userController.details);
 router.get('/gallery', userController.getGallery);
 router.get('/auto-login',userAuth,userController.autoLogin);
@@ -82,11 +91,11 @@ router.get('/download-logo',userAuth,userController.generateLogoId);
 
 router.post('/register', userController.register);
 router.post('/login', userController.login);
-router.post('/sendOTP',userController.sendOTP);
-router.post('/verifyOTP',userController.verifyOTP);
+router.post('/sendOTP',limiter,userController.sendOTP);
+router.post('/verifyOTP',limiter,userController.verifyOTP);
 router.post('/resetPassword',userAuth,userController.resetPassword);
-router.post('/forgotPassword',userController.forgotPassword);
-router.post('/verifyForgotOTP',userController.verifyForgotPasswordOTP);
+router.post('/forgotPassword',limiter,userController.forgotPassword);
+router.post('/verifyForgotOTP',limiter,userController.verifyForgotPasswordOTP);
 router.post('/add-like-to-image',userAuth,userController.addLikeToImage);
 router.post('/remove-like-from-image',userAuth,userController.removeLikeFromImage);
 
