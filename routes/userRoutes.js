@@ -75,7 +75,13 @@ const CardStorage = multer.diskStorage({
 // Define a rate limiter
 const limiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-  max:5, // limit each IP to 40 requests per windowMs
+  max:40, // limit each IP to 40 requests per windowMs
+  message: "Too many requests from this IP, please try again later"
+});
+// Define a rate limiter
+const limiterEmail = rateLimit({
+  windowMs: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
+  max:15, // limit each IP to 40 requests per windowMs
   message: "Too many requests from this IP, please try again later"
 });
 
@@ -90,11 +96,11 @@ router.get('/gallery-likes',userAuth,userController.getGalleryLikes);
 router.get('/download-logo',userAuth,userController.generateLogoId);
 
 router.post('/register', userController.register);
-router.post('/login', userController.login);
-router.post('/sendOTP',limiter,userController.sendOTP);
+router.post('/login',limiter, userController.login);
+router.post('/sendOTP',limiterEmail,userController.sendOTP);
 router.post('/verifyOTP',limiter,userController.verifyOTP);
 router.post('/resetPassword',userAuth,userController.resetPassword);
-router.post('/forgotPassword',limiter,userController.forgotPassword);
+router.post('/forgotPassword',limiterEmail,userController.forgotPassword);
 router.post('/verifyForgotOTP',limiter,userController.verifyForgotPasswordOTP);
 router.post('/add-like-to-image',userAuth,userController.addLikeToImage);
 router.post('/remove-like-from-image',userAuth,userController.removeLikeFromImage);
