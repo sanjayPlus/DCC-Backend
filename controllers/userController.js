@@ -1018,19 +1018,19 @@ const verifyVolunteer = async (req, res) => {
     const user = await User.findById(id);
     const updateUser = await User.findByIdAndUpdate(
       req.body.id,
-       {
-         $set: {
-           volunteer: {
-          ...user.volunteer,
-             status: true,
-             applied: true
-           }
-         }
-       }
-    )
-      if(!updateUser) {
-        return res.status(400).json({ error: "User not found" });
+      {
+        $set: {
+          volunteer: {
+            ...user.volunteer,
+            status: true,
+            applied: true
+          }
+        }
       }
+    )
+    if (!updateUser) {
+      return res.status(400).json({ error: "User not found" });
+    }
     res.status(200).json({ message: "Verified Successfully" });
   } catch (error) {
     console.error("Error during registration as volunteer:", error.message);
@@ -1039,20 +1039,20 @@ const verifyVolunteer = async (req, res) => {
 }
 const disQualifyVolunteer = async (req, res) => {
   try {
-   const updateUser = await User.findByIdAndUpdate(
-    req.body.id,
-     {
-       $set: {
-         volunteer: {
-           status: false,
-           applied: false
-         }
-       }
-     }
-   )
-      if(!updateUser) {
-        return res.status(400).json({ error: "User not found" });
+    const updateUser = await User.findByIdAndUpdate(
+      req.body.id,
+      {
+        $set: {
+          volunteer: {
+            status: false,
+            applied: false
+          }
+        }
       }
+    )
+    if (!updateUser) {
+      return res.status(400).json({ error: "User not found" });
+    }
     res.status(200).json({ message: "Disqualified Successfully" });
   }
   catch (error) {
@@ -1089,7 +1089,58 @@ const generateLogoId = async (req, res) => {
   }
 };
 
+const getAssignments = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    const volunteer = user.volunteer;
+    if(valunteer.status == false){
+      return res.status(400).json({ error: "Not a volunteer" });
+    }
+    const volunteerToken = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
+      expiresIn: "36500d",
+    })
+    const assignments = await axios.get(`${process.env.VOLUNTEER_URL}/api/admin/assignments`, {
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": volunteerToken
+      }
+    })
 
+    res.status(200).json(assignments.data);
+  } catch (error) {
+    console.error("Error getting assignments:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+const getWhatsapp = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    const volunteer = user.volunteer;
+    if(valunteer.status == false){
+      return res.status(400).json({ error: "Not a volunteer" });
+    }
+    const volunteerToken = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
+      expiresIn: "36500d",
+    })
+    const whatsapp = await axios.get(`${process.env.VOLUNTEER_URL}/api/admin/whatsapp`, {
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": volunteerToken
+      }
+    })
+  
+    res.status(200).json(whatsapp.data);
+  } catch (error) {
+    console.error("Error getting assignments:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 module.exports = {
   register,
   login,
@@ -1118,5 +1169,7 @@ module.exports = {
   registerAsVolunteer,
   verifyVolunteer,
   disQualifyVolunteer,
-  generateLogoId
+  generateLogoId,
+  getAssignments,
+  getWhatsapp
 };
