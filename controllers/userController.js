@@ -998,6 +998,7 @@ const registerAsVolunteer = async (req, res) => {
             ...volunteer,
             applied: true,
             status: false,
+            volunteerId: volunteer.volunteerId,
           },
         },
       },
