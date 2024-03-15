@@ -1177,7 +1177,7 @@ const loginAsVolunteer = async (req, res) => {
         "x-access-token": token
       }
     })
-    res.status(200).json(volunteerToken.data.token);
+    res.status(200).json({token:volunteerToken.data.token});
   } catch (error) {
     console.error("Error getting assignments:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
