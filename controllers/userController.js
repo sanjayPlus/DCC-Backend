@@ -1166,14 +1166,15 @@ const loginAsVolunteer = async (req, res) => {
     if(volunteer.status == false){
       return res.status(400).json({ error: "Not a volunteer" });
     }
-  const volunteerToken =await   axios.post(`${process.env.VOLUNTEER_URL}/api/volunteer/login-from-app`, {
+    const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
+      expiresIn: "1h",
+    })
+  const volunteerToken = await axios.post(`${process.env.VOLUNTEER_URL}/api/volunteer/login-from-app`, {
       volunteerId:volunteer.volunteerId
     },{
       headers: {
         "Content-Type": "application/json",
-        "x-access-token": jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
-          expiresIn: "36500d",
-        })
+        "x-access-token": token
       }
     })
     res.status(200).json(volunteerToken.data.token);
