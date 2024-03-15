@@ -1155,6 +1155,32 @@ const getWhatsapp = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+const loginAsVolunteer = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    const volunteer = user.volunteer;
+    if(volunteer.status == false){
+      return res.status(400).json({ error: "Not a volunteer" });
+    }
+  const volunteerToken =await   axios.post(`${process.env.VOLUNTEER_URL}/api/volunteer/login-from-app`, {
+      volunteerId:volunteer.volunteerId
+    },{
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
+          expiresIn: "36500d",
+        })
+      }
+    })
+    res.status(200).json(volunteerToken.data.token);
+  } catch (error) {
+    console.error("Error getting assignments:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 module.exports = {
   register,
   login,
@@ -1185,5 +1211,6 @@ module.exports = {
   disQualifyVolunteer,
   generateLogoId,
   getAssignments,
-  getWhatsapp
+  getWhatsapp,
+  loginAsVolunteer
 };
