@@ -74,16 +74,18 @@ const CardStorage = multer.diskStorage({
   
 // Define a rate limiter
 const limiter = rateLimit({
-  windowMs: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-  max:40, // limit each IP to 40 requests per windowMs
+  windowMs: 20 * 60 * 1000, // 20 minutes in milliseconds
+  max: 40, // limit each IP to 40 requests per windowMs
   message: "Too many requests from this IP, please try again later"
 });
+
 // Define a rate limiter
 const limiterEmail = rateLimit({
-  windowMs: 24 * 60 * 60 * 1000, // 24 hours in milliseconds
-  max:15, // limit each IP to 40 requests per windowMs
+  windowMs: 20 * 60 * 1000, // 20 minutes in milliseconds
+  max: 15, // limit each IP to 15 requests per windowMs
   message: "Too many requests from this IP, please try again later"
 });
+
 
 
 router.get('/protected', userAuth, userController.protected);
