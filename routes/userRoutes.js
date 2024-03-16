@@ -82,7 +82,7 @@ const limiter = rateLimit({
 // Define a rate limiter
 const limiterEmail = rateLimit({
   windowMs: 20 * 60 * 1000, // 20 minutes in milliseconds
-  max: 15, // limit each IP to 15 requests per windowMs
+  max: 25, // limit each IP to 15 requests per windowMs
   message: "Too many requests from this IP, please try again later"
 });
 
