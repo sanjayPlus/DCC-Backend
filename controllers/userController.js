@@ -395,7 +395,7 @@ const verifyOTP = async (req, res) => {
 
 const getGallery = async (req, res) => {
   try {
-    const gallery = await Gallery.find();
+    const gallery = await Gallery.find().sort({_id:-1});
     res.status(200).json(gallery);
   } catch (error) {
     console.error("Error during login:", error.message);
