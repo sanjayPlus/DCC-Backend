@@ -10,6 +10,9 @@ const sloganSchema = new mongoose.Schema({
     image: {
         type: String,
     },
+    title:{
+        type:String,
+    }
 });
 
 const Slogan = mongoose.model('Slogan', sloganSchema);

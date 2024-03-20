@@ -384,7 +384,7 @@ const deleteCalendarEvent = async (req, res) => {
 }
 const addSlogan = async (req, res) => {
     try {
-        const { slogan } = req.body;
+        const { slogan,title } = req.body;
         if (!slogan) {
             return res
                 .status(400)
@@ -395,6 +395,7 @@ const addSlogan = async (req, res) => {
         const newSlogan = await Slogan.create({
             slogan,
             image: `${process.env.DOMAIN}/sloganImage/${imageObj.filename}`,
+            title
         });
         res.status(201).json(newSlogan);
     } catch (error) {
