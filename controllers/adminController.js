@@ -1965,6 +1965,20 @@ const sendNotificationWithDistrict = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+const loginToVolunteer = async (req, res) => {
+    try {
+          const response =await  axios.get(`${process.env.VOLUNTEER_URL}/api/login-from-app`, {
+            headers: {
+              'Content-Type': 'application/json',
+                'x-access-token': jwt.sign({ userId: req.user.userId }, process.env.VOLUNTEER_SERVER_SECRET, { expiresIn: '36500d' }),
+            }
+          });
+          res.status(200).json(response.data);
+    } catch (error) {
+        console.error('Error sending message:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
 
 module.exports = {
     adminLogin,
@@ -2042,5 +2056,6 @@ module.exports = {
     deleteDeveloper,
     deleteCategorySocialMedia,
     getCategorySocialMedia,
-    sendNotificationWithDistrict
+    sendNotificationWithDistrict,
+    loginToVolunteer
 }
