@@ -20,6 +20,8 @@ const Notification = require("../models/Notification");
 const NotificationList = require("../models/NotificationList");
 const SocialMedia = require("../models/SocialMedia");
 const VideoGallery = require("../models/VideoGallery");
+const DailyNews = require("../models/DailyNews");
+const Swing = require("../models/Swing");
 
 const cron = require('node-cron');
 const moment = require('moment');
@@ -1991,7 +1993,7 @@ const addDailyNews = async (req, res) => {
             image: `${process.env.DOMAIN}/DailyNewsImage/${imageObj.filename}`,
             date,
         })
-        await dailyNews.save();
+        await DailyNews.save();
         res.status(200).json({ message: "Daily News added sucessfully", dailyNews });
     } catch (error) {
         console.error("error adding daily news", error.message);
