@@ -606,12 +606,13 @@ const getFeedBack = async (req, res) => {
 }
 const addCarousel = async (req, res) => {
     try {
-        const { name, href } = req.body;
+        const { name, href, title } = req.body;
         req.body.image = req.file;
         let imageObj = req.body.image;
         const newCarousel = await Carousel.create({
             name,
             href,
+            title,
             image: `${process.env.DOMAIN}/carouselImage/${imageObj.filename}`,
         });
         res.status(200).json(newCarousel);
@@ -2054,6 +2055,7 @@ const deleteSwing = async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 }
+
 module.exports = {
     adminLogin,
     adminRegister,
@@ -2138,4 +2140,5 @@ module.exports = {
     addSwing,
     getSwing,
     deleteSwing,
+    
 }

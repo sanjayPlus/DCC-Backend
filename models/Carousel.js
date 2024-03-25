@@ -12,6 +12,9 @@ const CarouselSchema = new mongoose.Schema({
     name:{
         type:String,
     },
+    title:{
+        type:String
+    },
 });
 
 const Carousel = mongoose.model('Carousel', CarouselSchema);
