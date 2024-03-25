@@ -1979,7 +1979,78 @@ const loginToVolunteer = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
+const addDailyNews = async (req, res) => {
+    try {
+        const { title, news, link, optional, date } = req.body;
+        const imageObj = req.file;
+        const dailyNews = await DailyNews.create({
+            title,
+            link,
+            news,
+            optional,
+            image: `${process.env.DOMAIN}/DailyNewsImage/${imageObj.filename}`,
+            date,
+        })
+        await dailyNews.save();
+        res.status(200).json({ message: "Daily News added sucessfully", dailyNews });
+    } catch (error) {
+        console.error("error adding daily news", error.message);
+        res.status(500).json({ error: "internal server error" })
+    }
+}
 
+const getDailyNews = async (req, res) => {
+    try {
+        const { date } = req.query;
+        const query = date ? { date } : {};
+
+        const dailyNews = await DailyNews.find(query);
+        res.status(200).json({ dailyNews });
+    } catch (error) {
+        console.error("error getting daily news", error.message);
+        res.status(500).json({ error: "internal server error" })
+    }
+}
+
+const deleteDailyNews = async (req, res) => {
+    try {
+        const { id } = req.params;
+        await DailyNews.deleteOne({ _id: id })
+        res.status(200).json({ message: "daily news deleted successfully" });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({ error: "internal server error" })
+    }
+}
+
+const addSwing = async (req, res) => {
+    try {
+        const { swing } = req.body;
+        const newSwing = new Swing({ swing });
+        await newSwing.save();
+    } catch (error) {
+
+    }
+}
+const getSwing = async (req, res) => {
+    try {
+        const swings = await Swing.find();
+        res.status(200).json({ swings });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error" });
+
+    }
+}
+const deleteSwing = async (req, res) => {
+    try {
+        const deletedSwing = await Swing.findOneAndDelete({ _id: req.params.id });
+        res.status(200).json({ message: "Swing deleted successfully", deletedSwing });
+    }
+    catch (error) {
+        res.status(500).json({ error: "Internal server error" });
+    }
+}
 module.exports = {
     adminLogin,
     adminRegister,
@@ -2057,5 +2128,11 @@ module.exports = {
     deleteCategorySocialMedia,
     getCategorySocialMedia,
     sendNotificationWithDistrict,
-    loginToVolunteer
+    loginToVolunteer,
+    addDailyNews,
+    getDailyNews,
+    deleteDailyNews,
+    addSwing,
+    getSwing,
+    deleteSwing,
 }

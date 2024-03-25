@@ -277,6 +277,29 @@ const developerImage = multer({
     fileSize: 20 * 1024 * 1024, // 20MB in bytes
   },
 });
+
+const DailyNewsStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/DailyNewsImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
+// Configure storage engine instead of dest object.
+const dailyNewsImage = multer({
+  storage: DailyNewsStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
+
 router.post('/login',adminController.adminLogin);
 router.get('/login-from-app',adminAuth,adminController.loginToVolunteer);
 router.get('/user/:id',adminAuth,adminController.getUser);
@@ -356,4 +379,13 @@ router.delete('/delete-social-media-details/:socialId/:itemId',adminAuth,adminCo
 router.delete('/delete-social-category/:category',adminAuth,adminController.deleteCategorySocialMedia);
 router.delete('/delete-leadership/:id',adminAuth,adminController.deleteLeadership);
 router.delete('/delete-developer/:id',adminAuth,adminController.deleteDeveloper);
+
+router.post('/daily-news',dailyNewsImage.single('image'),adminAuth,adminController.addDailyNews);
+router.get('/daily-news',adminController.getDailyNews);
+router.delete('/daily-news/:id',adminAuth,adminController.deleteDailyNews)
+
+router.post('/swing',adminAuth,adminController.addSwing);
+router.get('/swing',adminController.getSwing);
+router.delete('/swing/:id',adminAuth,adminController.deleteSwing);
+
 module.exports = router;
