@@ -1993,7 +1993,7 @@ const addDailyNews = async (req, res) => {
             image: `${process.env.DOMAIN}/DailyNewsImage/${imageObj.filename}`,
             date,
         })
-        await DailyNews.save();
+        await dailyNews.save();
         res.status(200).json({ message: "Daily News added sucessfully", dailyNews });
     } catch (error) {
         console.error("error adding daily news", error.message);
@@ -2030,6 +2030,7 @@ const addSwing = async (req, res) => {
         const { swing } = req.body;
         const newSwing = new Swing({ swing });
         await newSwing.save();
+        res.status(200).json({ message: "swing added sucessfully", swing });
     } catch (error) {
 
     }
