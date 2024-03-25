@@ -282,7 +282,7 @@ const deleteMeme = async (req, res) => {
 }
 const getMeme = async (req, res) => {
     try {
-        const meme = await Meme.find({});
+        const meme = await Meme.find({}).sort({ _id: -1 });
         res.status(200).json(meme);
     } catch (error) {
         console.error("Error deleting image:", error.message);
@@ -327,7 +327,7 @@ const deleteReels = async (req, res) => {
 }
 const getReels = async (req, res) => {
     try {
-        const reels = await Reels.find({});
+        const reels = await Reels.find({}).sort({ _id: -1 });
         res.status(200).json(reels);
     } catch (error) {
         console.error("Error deleting image:", error.message);
@@ -384,7 +384,7 @@ const deleteCalendarEvent = async (req, res) => {
 }
 const addSlogan = async (req, res) => {
     try {
-        const { slogan } = req.body;
+        const { slogan,title } = req.body;
         if (!slogan) {
             return res
                 .status(400)
@@ -395,6 +395,7 @@ const addSlogan = async (req, res) => {
         const newSlogan = await Slogan.create({
             slogan,
             image: `${process.env.DOMAIN}/sloganImage/${imageObj.filename}`,
+            title
         });
         res.status(201).json(newSlogan);
     } catch (error) {
@@ -1589,7 +1590,7 @@ const deleteNotification = async (req, res) => {
 const addCategoryForSocialMedia = async (req, res) => {
     try {
         const { category } = req.body;
-        if(!category) {
+        if (!category) {
             return res.status(400).json({ error: "All fields are required" });
         }
         const addSocialMedia = await SocialMedia.create({
@@ -1731,7 +1732,7 @@ const AddVideogallery = async (req, res) => {
 
 const getVideogallery = async (req, res) => {
     try {
-        const videos = await VideoGallery.find();
+        const videos = await VideoGallery.find().sort({ _id: -1 });
         res.status(200).json(videos);
     } catch (error) {
         console.error("Error deleting notification:", error.message);
@@ -1868,7 +1869,7 @@ const deleteDeveloper = async (req, res) => {
 }
 const deleteCategorySocialMedia = async (req, res) => {
     try {
-        const social = await SocialMedia.findOneAndDelete({category: req.params.category});
+        const social = await SocialMedia.findOneAndDelete({ category: req.params.category });
         if (!social) {
             return res.status(404).json({ error: "Social media not found" });
         }
@@ -1889,6 +1890,93 @@ const getCategorySocialMedia = async (req, res) => {
 
     } catch (error) {
         console.error("Error deleting social media:", error.message);
+    }
+}
+const sendNotificationWithDistrict = async (req, res) => {
+
+    try {
+        const { title, url, district, assembly, constituency } = req.body;
+        const query = {};
+        if (district) {
+            query.district = district;
+        }
+        if (assembly) {
+            query.assembly = assembly;
+        }
+        if (constituency) {
+            query.constituency = constituency;
+        }
+
+        const imageObj = req.file;
+        const users = await User.find(query);
+        if (!users) {
+            throw new Error('No users found');
+        }
+        // Retrieve all tokens from the Notification model
+        const allTokens = await Notification.find({ userId: { $in: users.map(user => user._id) } }).distinct('token');
+        if (!allTokens) {
+            throw new Error('No tokens found');
+        }
+
+        // Build the payload
+        const payload = {
+            registration_ids: allTokens,
+            notification: {
+                body: title,
+                title: `${process.env.SITE_NAME}`,
+            },
+            data: {
+                url: url,
+            },
+        };
+
+        // Add image property to data if imageObj exists
+        if (imageObj) {
+            payload.notification.image = `${process.env.DOMAIN}/OneImage/${imageObj.filename}`;
+        }
+
+        console.log(JSON.stringify(payload));
+
+        const result = await fetch('https://fcm.googleapis.com/fcm/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `key=${process.env.FIREBASE_SERVER_KEY}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await result.json();
+
+        // Check for errors in the HTTP response
+        if (!result.ok) {
+            throw new Error(`FCM request failed with status ${result.status}: ${data}`);
+        }
+
+        const date = new Date().toString().trim("T");
+
+        // Use Promise.all to await both the fetch and the creation of NotificationList concurrently
+        await Promise.all([
+            NotificationList.create({ title: title, image: imageObj ? `${process.env.DOMAIN}/OneImage/${imageObj.filename}` : null, url: url, date: date }),
+            res.status(200).json({ message: 'Notification sent successfully', data }),
+        ]);
+    } catch (error) {
+        console.error('Error sending message:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+const loginToVolunteer = async (req, res) => {
+    try {
+          const response =await  axios.get(`${process.env.VOLUNTEER_URL}/api/login-from-app`, {
+            headers: {
+              'Content-Type': 'application/json',
+                'x-access-token': jwt.sign({ userId: req.user.userId }, process.env.VOLUNTEER_SERVER_SECRET, { expiresIn: '36500d' }),
+            }
+          });
+          res.status(200).json(response.data);
+    } catch (error) {
+        console.error('Error sending message:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
@@ -1967,5 +2055,7 @@ module.exports = {
     addDeveloper,
     deleteDeveloper,
     deleteCategorySocialMedia,
-    getCategorySocialMedia
+    getCategorySocialMedia,
+    sendNotificationWithDistrict,
+    loginToVolunteer
 }

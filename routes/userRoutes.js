@@ -4,6 +4,7 @@ const userController = require('../controllers/userController');
 const userAuth = require('../middleware/userAuth');
 const multer = require("multer");
 const appServerAuth = require('../middleware/appServerAuth');
+const rateLimit = require("express-rate-limit");
 
 const CardStorage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -71,20 +72,41 @@ const CardStorage = multer.diskStorage({
   }).array('aadhaarImages', 2); // Limit to 2 images
   //get
   
-  router.get('/protected', userAuth, userController.protected);
+// Define a rate limiter
+const limiter = rateLimit({
+  windowMs: 20 * 60 * 1000, // 20 minutes in milliseconds
+  max: 40, // limit each IP to 40 requests per windowMs
+  message: "Too many requests from this IP, please try again later"
+});
+
+// Define a rate limiter
+const limiterEmail = rateLimit({
+  windowMs: 20 * 60 * 1000, // 20 minutes in milliseconds
+  max: 25, // limit each IP to 15 requests per windowMs
+  message: "Too many requests from this IP, please try again later"
+});
+
+
+
+router.get('/protected', userAuth, userController.protected);
 router.get('/details', userAuth, userController.details);
 router.get('/gallery', userController.getGallery);
 router.get('/auto-login',userAuth,userController.autoLogin);
 router.get('/get-payments/:day',userAuth,userController.getPaymentDetailsWithDay);
 //get liked image list
 router.get('/gallery-likes',userAuth,userController.getGalleryLikes);
+router.get('/download-logo',userAuth,userController.generateLogoId);
+router.get('/get-assignments',userAuth,userController.getAssignments);
+router.get('/get-whatsapp',userAuth,userController.getWhatsapp);
+router.get('/login-as-volunteer',userAuth,userController.loginAsVolunteer);
+
 router.post('/register', userController.register);
-router.post('/login', userController.login);
-router.post('/sendOTP',userController.sendOTP);
-router.post('/verifyOTP',userController.verifyOTP);
+router.post('/login',limiter, userController.login);
+router.post('/sendOTP',limiterEmail,userController.sendOTP);
+router.post('/verifyOTP',limiter,userController.verifyOTP);
 router.post('/resetPassword',userAuth,userController.resetPassword);
-router.post('/forgotPassword',userController.forgotPassword);
-router.post('/verifyForgotOTP',userController.verifyForgotPasswordOTP);
+router.post('/forgotPassword',limiterEmail,userController.forgotPassword);
+router.post('/verifyForgotOTP',limiter,userController.verifyForgotPasswordOTP);
 router.post('/add-like-to-image',userAuth,userController.addLikeToImage);
 router.post('/remove-like-from-image',userAuth,userController.removeLikeFromImage);
 
@@ -99,7 +121,9 @@ router.post('/add-notification-token',userAuth,userController.storeNotificationT
 router.post('/apply-as-volunteer',aadhaarImages,userAuth,userController.registerAsVolunteer);
 router.post('/verify-volunteer',appServerAuth,userController.verifyVolunteer);
 router.post('/delete-volunteer',appServerAuth,userController.disQualifyVolunteer);
-router.post('/download-logo',userAuth,userController.generateLogoId);
+
+
+
 
 
 //update

@@ -87,21 +87,66 @@ const userSchema = new mongoose.Schema({
     merchantTransactionId: String,
   }],
   volunteer: {
-    name: String,
-    phone: String,
-    email: String,
-    booth: String,
-    aadhaar: Array,
-    wardNo: String,
-    aadhaarNo: String,
-    madalamPresident: String,
-    address: String,
-    mandalamMember: String,
-    volunteerId: String,
-    district: String,
-    constituency: String,
-    assembly: String,
-    boothRule: String,
+    name: {
+      type: String,
+      default: ""
+    },
+    phone: {
+      type: String,
+      default: ""
+    },
+    email: {
+      type: String,
+      default: ""
+    },
+    booth: {
+      type: String,
+      default: ""
+    },
+    aadhaar: {
+      type: Array,
+      default: []
+    },
+    wardNo: {
+      type: String,
+      default: ""
+    },
+    aadhaarNo: {
+      type: String,
+      default: ""
+    },
+    madalamPresident: {
+      type: String,
+      default: ""
+    },
+    address: {
+      type: String,
+      default: ""
+    },
+    mandalamMember: {
+      type: String,
+      default: ""
+    },
+    volunteerId: {
+      type: String,
+      default: ""
+    },
+    district: {
+      type: String,
+      default: ""
+    },
+    constituency: {
+      type: String,
+      default: ""
+    },
+    assembly: {
+      type: String,
+      default: ""
+    },
+    boothRule: {
+      type: Array,
+      default: []
+    },
     applied: {
       type: Boolean,
       default: false
@@ -109,8 +154,13 @@ const userSchema = new mongoose.Schema({
     status: {
       type: Boolean,
       default: false
-    }
+    },
+    power: {
+      type: String,
+      default: ""
+    },
   }
+  
 });
 
 // Virtual for age calculation based on date_of_birth

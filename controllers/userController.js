@@ -14,6 +14,10 @@ const Notification = require("../models/Notification");
 const Payment = require("../models/Payment");
 const axios = require("axios");
 const svgGenerator = require("../helpers/svgGenerator");
+const svg2img = require('svg2img');
+const { promisify } = require('util');
+
+const asyncSvg2img = promisify(svg2img);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -295,15 +299,15 @@ const sendOTP = async (req, res) => {
       `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
       <div style="margin:50px auto;width:70%;padding:20px 0">
         <div style="border-bottom:1px solid #eee">
-          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADBHAVAN APP</a>
+          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">${process.env.SITE_NAME} APP</a>
         </div>
         <p style="font-size:1.1em">Hi ${user.name},</p>
-        <p>Thank you for choosing SADBHAVAN APP. Use the following OTP to complete your Sign Up procedures. OTP is valid for 20 minutes</p>
+        <p>Thank you for choosing ${process.env.SITE_NAME} APP. Use the following OTP to complete your Sign Up procedures. OTP is valid for 20 minutes</p>
         <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
-        <p style="font-size:0.9em;">Regards,<br />SADBHAVAN APP</p>
+        <p style="font-size:0.9em;">Regards,<br />${process.env.SITE_NAME} APP</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-          <p>SADBHAVAN APP</p>
+          <p>:${process.env.SITE_NAME} APP</p>
         </div>
       </div>
     </div>`
@@ -366,16 +370,16 @@ const verifyOTP = async (req, res) => {
       `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
       <div style="margin:50px auto;width:70%;padding:20px 0">
         <div style="border-bottom:1px solid #eee">
-          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADBHAVAN APP</a>
+          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">${process.env.SITE_NAME} APP</a>
         </div>
         <p style="font-size:1.1em">Hi ${user.name},</p>
-        <p>WELCOME TO SADBHAVAN APP. Thank you for choosing SADBHAVAN APP.</p>
+        <p>WELCOME TO ${process.env.SITE_NAME} APP. Thank you for choosing ${process.env.SITE_NAME} APP.</p>
         <p>Congratulations Your Account has been created successfully</p>
         
-        <p style="font-size:0.9em;">Regards,<br />SADBHAVAN APP</p>
+        <p style="font-size:0.9em;">Regards,<br />${process.env.SITE_NAME} APP</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-          <p>SADBHAVAN APP</p>
+          <p>${process.env.SITE_NAME} APP</p>
         </div>
       </div>
     </div>`
@@ -391,7 +395,7 @@ const verifyOTP = async (req, res) => {
 
 const getGallery = async (req, res) => {
   try {
-    const gallery = await Gallery.find();
+    const gallery = await Gallery.find().sort({_id:-1});
     res.status(200).json(gallery);
   } catch (error) {
     console.error("Error during login:", error.message);
@@ -504,16 +508,16 @@ const forgotPassword = async (req, res) => {
       `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
       <div style="margin:50px auto;width:70%;padding:20px 0">
         <div style="border-bottom:1px solid #eee">
-          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">SADBHAVAN APP</a>
+          <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">${process.env.SITE_NAME} APP</a>
         </div>
         <p style="font-size:1.1em">Hi ${user.name},</p>
         <p>We have received a request to reset your password. Use the following OTP to reset your password. OTP is valid for 20 minutes</p>
         <p>Please do not share this OTP with anyone.</p>
         <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
-        <p style="font-size:0.9em;">Regards,<br />SADBHAVAN APP</p>
+        <p style="font-size:0.9em;">Regards,<br />${process.env.SITE_NAME} APP</p>
         <hr style="border:none;border-top:1px solid #eee" />
         <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-          <p>SADBHAVAN APP</p>
+          <p>${process.env.SITE_NAME} APP</p>
         </div>
       </div>
     </div>`
@@ -910,6 +914,7 @@ const registerAsVolunteer = async (req, res) => {
       constituency,
       assembly,
       boothRule,
+      power,
     } = req.body;
 
     const imageObjs = req.files;
@@ -919,11 +924,13 @@ const registerAsVolunteer = async (req, res) => {
     }
 
     const user = await User.findById(req.user.userId);
-    if(user.volunteer.applied){
-      return res.status(400).json({ error: "Already Applied" });
-    }
+
     if (!user) {
       return res.status(400).json({ error: "User not found" });
+    }
+
+    if (user.volunteer.applied) {
+      return res.status(400).json({ error: "Already Applied" });
     }
 
     const images = [];
@@ -935,7 +942,7 @@ const registerAsVolunteer = async (req, res) => {
     }
 
     // If details added
-   const volunteer = {
+    const volunteer = {
       wardNo: wardNo || "",
       booth,
       district,
@@ -949,10 +956,10 @@ const registerAsVolunteer = async (req, res) => {
       email: user.email,
       aadhaar: images,
       mandalamMember: mandalamMember || "",
-      boothRule: boothRule || [],
+      boothRule: boothRule || [], // Assuming boothRule is an array
+      power,
+      volunteerId: "", // initialize volunteerId
     };
-
-    await user.save();
 
     const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
       expiresIn: "36500d",
@@ -975,27 +982,34 @@ const registerAsVolunteer = async (req, res) => {
         }
       );
 
-        volunteer.volunteerId = axiosResponse.data.volunteerId;
-        
+      volunteer.volunteerId = axiosResponse.data.volunteerId;
     } catch (error) {
-      // If the registration fails, you might want to handle it appropriately.
-      return res.status(400).json({ error: "Registration failed" });
+      console.log(error);
     }
+
     volunteer.applied = true;
     volunteer.status = false;
-   const updatedUser = await User.findByIdAndUpdate(
-    req.user.userId,
-     {
-       $set: {
-         volunteer: volunteer,
 
-       }
-     }
-   )
-      if(!updatedUser) {
-        return res.status(400).json({ error: "User not found" });
-      }
-    res.status(200).json({message: "Registered Successfully"});
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.userId,
+      {
+        $set: {
+          volunteer: {
+            ...volunteer,
+            applied: true,
+            status: false,
+            volunteerId: volunteer.volunteerId,
+          },
+        },
+      },
+      { new: true } // to get the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ message: "Registered Successfully" });
   } catch (error) {
     console.error("Error during registration as a volunteer:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -1005,13 +1019,23 @@ const registerAsVolunteer = async (req, res) => {
 
 const verifyVolunteer = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
-    if (!user) {
+    const { id } = req.body;
+    const user = await User.findById(id);
+    const updateUser = await User.findByIdAndUpdate(
+      req.body.id,
+      {
+        $set: {
+          volunteer: {
+            ...user.volunteer,
+            status: true,
+            applied: true
+          }
+        }
+      }
+    )
+    if (!updateUser) {
       return res.status(400).json({ error: "User not found" });
     }
-    user.volunteer.applied = true;
-    user.volunteer.status = true;
-    user.save();
     res.status(200).json({ message: "Verified Successfully" });
   } catch (error) {
     console.error("Error during registration as volunteer:", error.message);
@@ -1020,20 +1044,20 @@ const verifyVolunteer = async (req, res) => {
 }
 const disQualifyVolunteer = async (req, res) => {
   try {
-   const updateUser = await User.findByIdAndUpdate(
-    req.body.id,
-     {
-       $set: {
-         volunteer: {
-           status: false,
-           applied: false
-         }
-       }
-     }
-   )
-      if(!updateUser) {
-        return res.status(400).json({ error: "User not found" });
+    const updateUser = await User.findByIdAndUpdate(
+      req.body.id,
+      {
+        $set: {
+          volunteer: {
+            status: false,
+            applied: false
+          }
+        }
       }
+    )
+    if (!updateUser) {
+      return res.status(400).json({ error: "User not found" });
+    }
     res.status(200).json({ message: "Disqualified Successfully" });
   }
   catch (error) {
@@ -1043,20 +1067,119 @@ const disQualifyVolunteer = async (req, res) => {
 }
 const generateLogoId = async (req, res) => {
   try {
-    
+    const user = await User.findById(req.user.userId);
+
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+
+    if (!user.volunteer.status) {
+      return res.status(400).json({ error: "Not a volunteer" });
+    }
+
+    const svg = svgGenerator(
+      user.volunteer.booth,
+      user.volunteer.district,
+      user.volunteer.constituency,
+      user.volunteer.assembly
+    );
+
+    // Convert SVG to PNG
+    asyncSvg2img(svg, { format: 'png' }, async (error, buffer) => {
+      if (error) {
+        console.error("Error converting SVG to PNG:", error.message);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      // Set content type header
+      res.setHeader('Content-Type', 'image/png');
+      // Set content disposition header to force browser to download
+      res.setHeader('Content-Disposition', 'attachment; filename="logo.png"');
+      // Send the PNG data as binary
+      res.status(200).send(buffer);
+    });
+  } catch (error) {
+    console.error("Error generating logo ID:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getAssignments = async (req, res) => {
+  try {
     const user = await User.findById(req.user.userId);
     if (!user) {
       return res.status(400).json({ error: "User not found" });
     }
-    if(!user.volunteer.status){
-      return res.status(400).json({ error: "Already Applied" });
+    const volunteer = user.volunteer;
+    if(volunteer.status == false){
+      return res.status(400).json({ error: "Not a volunteer" });
     }
-    const svg = svgGenerator(user.volunteer.booth, user.volunteer.district, user.volunteer.constituency,user.volunteer.assembly);
-    const buffer = Buffer.from(svg);
-    const base64String = buffer.toString("base64");
-    res.status(200).json(base64String);
+    const volunteerToken = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
+      expiresIn: "36500d",
+    })
+    const assignments = await axios.get(`${process.env.VOLUNTEER_URL}/api/admin/assignments`, {
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": volunteerToken
+      }
+    })
+
+    res.status(200).json(assignments.data);
   } catch (error) {
-    console.error("Error during registration as volunteer:", error.message);
+    console.error("Error getting assignments:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+const getWhatsapp = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    const volunteer = user.volunteer;
+    if(volunteer.status == false){
+      return res.status(400).json({ error: "Not a volunteer" });
+    }
+    const volunteerToken = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
+      expiresIn: "36500d",
+    })
+    const whatsapp = await axios.get(`${process.env.VOLUNTEER_URL}/api/admin/whatsapp`, {
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": volunteerToken
+      }
+    })
+  
+    res.status(200).json(whatsapp.data);
+  } catch (error) {
+    console.error("Error getting assignments:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+const loginAsVolunteer = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
+    const volunteer = user.volunteer;
+    if(volunteer.status == false){
+      return res.status(400).json({ error: "Not a volunteer" });
+    }
+    const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
+      expiresIn: "1h",
+    })
+  const volunteerToken = await axios.post(`${process.env.VOLUNTEER_URL}/api/volunteer/login-from-app`, {
+      volunteerId:volunteer.volunteerId
+    },{
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": token
+      }
+    })
+    res.status(200).json({token:volunteerToken.data.token});
+  } catch (error) {
+    console.error("Error getting assignments:", error.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
@@ -1088,5 +1211,8 @@ module.exports = {
   registerAsVolunteer,
   verifyVolunteer,
   disQualifyVolunteer,
-  generateLogoId
+  generateLogoId,
+  getAssignments,
+  getWhatsapp,
+  loginAsVolunteer
 };
