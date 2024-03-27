@@ -299,6 +299,27 @@ const dailyNewsImage = multer({
     fileSize: 20 * 1024 * 1024, // 20MB in bytes
   },
 });
+const SoundStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/Sound");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
+// Configure storage engine instead of dest object.
+const soundCloud = multer({
+  storage: SoundStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
 
 router.post('/login',adminController.adminLogin);
 router.get('/login-from-app',adminAuth,adminController.loginToVolunteer);
@@ -361,6 +382,7 @@ router.post('/add-leadership',leaderImage.single('image'),adminAuth,adminControl
 router.post('/update-social-media-details/:socialId/:itemId',adminAuth,socialMediaImage.single('image'),adminAuth,adminController.updateSocialMediaDetails);
 router.post('/add-developer',developerImage.single('image'),adminAuth,adminController.addDeveloper);
 router.post('/send-notification-with-district',OneImage.single('image'),adminAuth,adminController.sendNotificationWithDistrict);
+router.post('/sound-cloud',soundCloud.single('sound'),adminAuth,adminController.addSoundCloud);
 
 router.delete('/user/:id',adminAuth,adminController.deleteUser);
 router.delete('/deleteImage/:id',adminAuth,adminController.deleteImage);

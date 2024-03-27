@@ -29,6 +29,7 @@ const Meme = require("../models/Meme");
 const Reels = require("../models/Reels");
 const Leadership = require("../models/Leadership");
 const Developer = require("../models/Developer");
+const Sound = require("../models/Sound");
 const cronExpression = '0 0 * * *';
 
 const myCronJob = cron.schedule(cronExpression, async () => {
@@ -2056,6 +2057,42 @@ const deleteSwing = async (req, res) => {
     }
 }
 
+const addSoundCloud = async (req, res) => {
+    try {
+        const { title, url, description } = req.body;
+        const imgObj = req.file;
+        const newVideo = await Sound.create({
+            title,
+            url,
+            sound: `${process.env.DOMAIN}/Sound/${imgObj.filename}`,
+            description:description,
+
+        })
+        res.status(200).json(newVideo);
+    } catch (error) {
+        console.error("Error deleting notification:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const getSoundCloud = async (req, res) => {
+    try {
+        const sounds = await Sound.find();
+        res.status(200).json(sounds);
+    } catch (error) {
+        console.error("Error deleting notification:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const deleteSoundCloud= async (req, res) => {
+    try {
+        const deletedSound = await Sound.findOneAndDelete({ _id: req.params.id });
+        res.status(200).json({ message: "Sound deleted successfully", deletedSound });
+    } catch (error) {
+        console.error("Error deleting video:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports = {
     adminLogin,
     adminRegister,
@@ -2140,5 +2177,8 @@ module.exports = {
     addSwing,
     getSwing,
     deleteSwing,
-    
+    addSoundCloud,
+    getSoundCloud,
+    deleteSoundCloud
+
 }
