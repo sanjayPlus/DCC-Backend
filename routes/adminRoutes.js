@@ -349,6 +349,7 @@ router.get('/meme',adminController.getMeme);
 router.get('/leadership',adminController.getLeadership);
 router.get('/get-social-media/:socialId/:itemId',adminController.getSocialMediaDetailsById);
 router.get('/get-social-category',adminController.getCategorySocialMedia);
+router.get('/sound-cloud',adminController.getSoundCloud);
 
 router.post('/gallery',galleryImage.single('image'),adminAuth,adminController.addGallery);
 router.post('/meme',memeImage.single('image'),adminAuth,adminController.addGallery);
@@ -401,6 +402,7 @@ router.delete('/delete-social-media-details/:socialId/:itemId',adminAuth,adminCo
 router.delete('/delete-social-category/:category',adminAuth,adminController.deleteCategorySocialMedia);
 router.delete('/delete-leadership/:id',adminAuth,adminController.deleteLeadership);
 router.delete('/delete-developer/:id',adminAuth,adminController.deleteDeveloper);
+router.delete('/delete-soundcloud/:id',adminAuth,adminController.deleteSoundCloud);
 
 router.post('/daily-news',dailyNewsImage.single('image'),adminAuth,adminController.addDailyNews);
 router.get('/daily-news',adminController.getDailyNews);
