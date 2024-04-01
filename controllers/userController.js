@@ -279,7 +279,7 @@ const loginAsGuest = async (req, res) => {
   }
     const token = jwt.sign({ userId: isGuestExist._id }, jwtSecret, {
       expiresIn: "365d",
-    })
+    });
 
     res.status(200).json({ token });
   } catch (error) {

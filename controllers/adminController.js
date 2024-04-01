@@ -1762,8 +1762,21 @@ const deleteSocialMediaDetails = async (req, res) => {
         if (!social) {
             return res.status(404).json({ error: "Social media not found" });
         }
-        social.socialMediaSchema.splice(itemId, 1);
+
+        // Find the index of the item with the given itemId
+        const index = social.socialMediaSchema.findIndex(item => item.id === itemId);
+
+        // If the index is not found, return an error
+        if (index === -1) {
+            return res.status(404).json({ error: "Item not found" });
+        }
+
+        // Remove the item at the found index
+        social.socialMediaSchema.splice(index, 1);
+
+        // Save the updated document
         await social.save();
+
         res.status(200).json({ msg: "Social media removed" });
     } catch (error) {
         console.error("Error deleting social media:", error.message);
