@@ -270,7 +270,7 @@ const loginAsGuest = async (req, res) => {
   try {
   let  isGuestExist = await User.findOne({ email: "guest@sadbhavana.com" });
     if(!isGuestExist){
-    const user = await User.create({
+     isGuestExist= await User.create({
       name: "Guest",
       email: "guest@sadbhavana.com",
       password: Date.now().toString(),
