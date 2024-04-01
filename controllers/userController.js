@@ -49,7 +49,7 @@ const register = async (req, res) => {
         return res.status(400).json({ error: "Email already exists" });
       }
     }
-    // // Step 2: Validate User Input
+    //  Step 2: Validate User Input
     if (
       !name ||
       !email ||
@@ -266,6 +266,27 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+const loginAsGuest = async (req, res) => {
+  try {
+  let  isGuestExist = await User.findOne({ email: "guest@sadbhavana.com" });
+    if(!isGuestExist){
+    const user = await User.create({
+      name: "Guest",
+      email: "guest@sadbhavana.com",
+      password: Date.now().toString(),
+      guest : true
+    });
+  }
+    const token = jwt.sign({ userId: isGuestExist._id }, jwtSecret, {
+      expiresIn: "365d",
+    })
+
+    res.status(200).json({ token });
+  } catch (error) {
+    console.error("Error during login:", error.message);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
 const sendOTP = async (req, res) => {
   try {
     // Step 1: Receive User Data
@@ -1214,5 +1235,6 @@ module.exports = {
   generateLogoId,
   getAssignments,
   getWhatsapp,
-  loginAsVolunteer
+  loginAsVolunteer,
+  loginAsGuest
 };

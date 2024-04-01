@@ -99,6 +99,7 @@ router.get('/download-logo',userAuth,userController.generateLogoId);
 router.get('/get-assignments',userAuth,userController.getAssignments);
 router.get('/get-whatsapp',userAuth,userController.getWhatsapp);
 router.get('/login-as-volunteer',userAuth,userController.loginAsVolunteer);
+router.get('/login-as-guest',userController.loginAsGuest);
 
 router.post('/register', userController.register);
 router.post('/login',limiter, userController.login);

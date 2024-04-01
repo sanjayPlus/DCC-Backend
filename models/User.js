@@ -79,6 +79,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
+  guest: {
+    type: Boolean,
+    default: false
+  },
   payments: [{
     paymentId: String,
     amount: Number,
@@ -160,7 +164,7 @@ const userSchema = new mongoose.Schema({
       default: ""
     },
   }
-  
+
 });
 
 // Virtual for age calculation based on date_of_birth
