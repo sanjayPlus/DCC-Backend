@@ -980,6 +980,7 @@ const registerAsVolunteer = async (req, res) => {
       boothRule: boothRule || [], // Assuming boothRule is an array
       power,
       volunteerId: "", // initialize volunteerId
+      loksabha: user.constituency,
     };
 
     const token = jwt.sign({ userId: user._id }, process.env.VOLUNTEER_SERVER_SECRET, {
