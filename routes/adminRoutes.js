@@ -351,7 +351,7 @@ router.get('/leadership',adminController.getLeadership);
 router.get('/get-social-media/:socialId/:itemId',adminController.getSocialMediaDetailsById);
 router.get('/get-social-category',adminController.getCategorySocialMedia);
 router.get('/sound-cloud',adminController.getSoundCloud);
-router.get('/login-from-dcc-admin',appServerAuth,adminController.LoginFromDCCAdmin);
+router.get('/login-from-dcc',appServerAuth,adminController.LoginFromDCCAdmin);
 
 router.post('/gallery',galleryImage.single('image'),adminAuth,adminController.addGallery);
 router.post('/meme',memeImage.single('image'),adminAuth,adminController.addGallery);
