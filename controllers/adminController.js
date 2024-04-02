@@ -2106,6 +2106,21 @@ const deleteSoundCloud= async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const LoginFromDCCAdmin = async (req, res) => {
+    try {
+        const admin = await Admin.findOne();
+        if (!admin) {
+            return res.status(400).json({ msg: "Invalid Credentials" });
+        }
+        const token = jwt.sign({ id: admin._id }, jwtSecret);
+        res.status(200).json(token);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+}
+
 module.exports = {
     adminLogin,
     adminRegister,
@@ -2192,6 +2207,7 @@ module.exports = {
     deleteSwing,
     addSoundCloud,
     getSoundCloud,
-    deleteSoundCloud
+    deleteSoundCloud,
+    LoginFromDCCAdmin
 
 }
