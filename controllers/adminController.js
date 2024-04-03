@@ -22,6 +22,7 @@ const SocialMedia = require("../models/SocialMedia");
 const VideoGallery = require("../models/VideoGallery");
 const DailyNews = require("../models/DailyNews");
 const Swing = require("../models/Swing");
+const SocialMediaForm = require("../models/SocialMediaForm");
 
 const cron = require('node-cron');
 const moment = require('moment');
@@ -2093,6 +2094,44 @@ const deleteSoundCloud= async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+
+const addSocialMediaForm = async (req, res) => {
+    try {
+        const { facebook, instagram, youtube, whatsapp, contact } = req.body;
+        const newSocialMediaForm = await SocialMediaForm.create({
+            facebook,
+            instagram,
+            youtube,
+            whatsapp,
+            contact
+
+        })
+        res.status(200).json(newSocialMediaForm);
+    } catch (error) {
+        console.error("Error adding social media:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+const getSocialMediaForm = async (req, res) => {
+    try {
+        const SocialMedia = await SocialMediaForm.find();
+        res.status(200).json(SocialMedia);
+    } catch (error) {
+        console.error("Error getting social media:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const deleteSocialMediaForm= async (req, res) => {
+    try {
+        const SocialMedia = await SocialMediaForm.findOneAndDelete({ _id: req.params.id });
+        res.status(200).json({ message: "Social media deleted successfully", SocialMedia });
+    } catch (error) {
+        console.error("Error deleting social media:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
 module.exports = {
     adminLogin,
     adminRegister,
@@ -2179,6 +2218,9 @@ module.exports = {
     deleteSwing,
     addSoundCloud,
     getSoundCloud,
-    deleteSoundCloud
+    deleteSoundCloud,
+    addSocialMediaForm,
+    getSocialMediaForm,
+    deleteSocialMediaForm,
 
 }

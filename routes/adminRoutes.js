@@ -412,4 +412,8 @@ router.post('/swing',adminAuth,adminController.addSwing);
 router.get('/swing',adminController.getSwing);
 router.delete('/swing/:id',adminAuth,adminController.deleteSwing);
 
+router.post('/social-media-form',adminAuth,adminController.addSocialMediaForm);
+router.get('/social-media-form',adminController.getSocialMediaForm);
+router.delete('/social-media-form/:id',adminAuth,adminController.deleteSocialMediaForm);
+
 module.exports = router;
