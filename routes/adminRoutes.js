@@ -4,6 +4,7 @@ const router = express.Router();
 const adminController = require("../controllers/adminController");
 const adminAuth = require("../middleware/adminAuth");
 const multer = require("multer");
+const appServerAuth = require("../middleware/appServerAuth");
 const GalleryStorage = multer.diskStorage({
     destination: function (req, file, cb) {
       // destination is used to specify the path of the directory in which the files have to be stored
@@ -350,6 +351,7 @@ router.get('/leadership',adminController.getLeadership);
 router.get('/get-social-media/:socialId/:itemId',adminController.getSocialMediaDetailsById);
 router.get('/get-social-category',adminController.getCategorySocialMedia);
 router.get('/sound-cloud',adminController.getSoundCloud);
+router.get('/login-from-dcc',appServerAuth,adminController.LoginFromDCCAdmin);
 
 router.post('/gallery',galleryImage.single('image'),adminAuth,adminController.addGallery);
 router.post('/meme',memeImage.single('image'),adminAuth,adminController.addGallery);
@@ -406,11 +408,12 @@ router.delete('/delete-soundcloud/:id',adminAuth,adminController.deleteSoundClou
 
 router.post('/daily-news',dailyNewsImage.single('image'),adminAuth,adminController.addDailyNews);
 router.get('/daily-news',adminController.getDailyNews);
-router.delete('/daily-news/:id',adminAuth,adminController.deleteDailyNews)
+router.delete('/daily-news/:id',adminAuth,adminController.deleteDailyNews);
 
 router.post('/swing',adminAuth,adminController.addSwing);
 router.get('/swing',adminController.getSwing);
 router.delete('/swing/:id',adminAuth,adminController.deleteSwing);
+
 
 router.post('/social-media-form',adminAuth,adminController.addSocialMediaForm);
 router.get('/social-media-form',adminController.getSocialMediaForm);

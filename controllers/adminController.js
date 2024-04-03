@@ -1763,8 +1763,21 @@ const deleteSocialMediaDetails = async (req, res) => {
         if (!social) {
             return res.status(404).json({ error: "Social media not found" });
         }
-        social.socialMediaSchema.splice(itemId, 1);
+
+        // Find the index of the item with the given itemId
+        const index = social.socialMediaSchema.findIndex(item => item.id === itemId);
+
+        // If the index is not found, return an error
+        if (index === -1) {
+            return res.status(404).json({ error: "Item not found" });
+        }
+
+        // Remove the item at the found index
+        social.socialMediaSchema.splice(index, 1);
+
+        // Save the updated document
         await social.save();
+
         res.status(200).json({ msg: "Social media removed" });
     } catch (error) {
         console.error("Error deleting social media:", error.message);
@@ -2094,6 +2107,21 @@ const deleteSoundCloud= async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const LoginFromDCCAdmin = async (req, res) => {
+    try {
+        const admin = await Admin.findOne();
+        if (!admin) {
+            return res.status(400).json({ msg: "Invalid Credentials" });
+        }
+        const token = jwt.sign({ id: admin._id }, jwtSecret);
+        res.status(200).json(token);
+    }
+    catch (error) {
+        console.log(error);
+        res.status(500).json({ error: error.message });
+    }
+}
+
 
 const addSocialMediaForm = async (req, res) => {
     try {
@@ -2218,6 +2246,8 @@ module.exports = {
     deleteSwing,
     addSoundCloud,
     getSoundCloud,
+    deleteSoundCloud,
+    LoginFromDCCAdmin,
     deleteSoundCloud,
     addSocialMediaForm,
     getSocialMediaForm,
