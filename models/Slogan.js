@@ -12,7 +12,16 @@ const sloganSchema = new mongoose.Schema({
     },
     title:{
         type:String,
-    }
+    },
+    author:{
+        type:String,
+    },
+    event:{
+        type:String,
+    },
+    
+},{
+    timestamps: true
 });
 
 const Slogan = mongoose.model('Slogan', sloganSchema);

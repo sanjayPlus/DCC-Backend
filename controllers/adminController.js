@@ -388,7 +388,7 @@ const deleteCalendarEvent = async (req, res) => {
 }
 const addSlogan = async (req, res) => {
     try {
-        const { slogan,title } = req.body;
+        const { slogan,title,author,event } = req.body;
         if (!slogan) {
             return res
                 .status(400)
@@ -399,7 +399,9 @@ const addSlogan = async (req, res) => {
         const newSlogan = await Slogan.create({
             slogan,
             image: `${process.env.DOMAIN}/sloganImage/${imageObj.filename}`,
-            title
+            title,
+            author,
+            event
         });
         res.status(201).json(newSlogan);
     } catch (error) {
@@ -1610,7 +1612,7 @@ const addCategoryForSocialMedia = async (req, res) => {
 
 const addSocialMediaDetails = async (req, res) => {
     try {
-        const { name, facebook, instagram, youtube, position, category } = req.body;
+        const { name, facebook, instagram, youtube, position, category,x,whatsapp} = req.body;
         const imageObj = req.file;
         //  if(!name || !image || !facebook || !instagram || !youtube || !position || !category) {
         //      return res.status(400).json({ error: "All fields are required" });   
@@ -1633,6 +1635,8 @@ const addSocialMediaDetails = async (req, res) => {
             instagram: instagram,
             youtube: youtube,
             position: position,
+            x:x,
+            whatsapp:whatsapp
         };
         // Check if socialMediaSchema exists and is an array, if not initialize it
         if (!existingCategory.socialMediaSchema || !Array.isArray(existingCategory.socialMediaSchema)) {
@@ -1721,11 +1725,13 @@ const updateSocialMediaDetails = async (req, res) => {
 
 const AddVideogallery = async (req, res) => {
     try {
-        const { title, url } = req.body;
+        const { title, url ,description} = req.body;
         const videoObj = req.file;
         const newVideo = await VideoGallery.create({
             title: title,
             url: url,
+            description: description,
+
             video: `${process.env.DOMAIN}/videoGallery/${videoObj.filename}`,
         })
         res.status(200).json(newVideo);
@@ -2121,7 +2127,6 @@ const LoginFromDCCAdmin = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 }
-
 
 const addSocialMediaForm = async (req, res) => {
     try {

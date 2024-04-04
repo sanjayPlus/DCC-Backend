@@ -13,6 +13,9 @@ const videoGallerySchema = new mongoose.Schema({
     video: {
         type: String,
     },
+    description:{
+        type: String,
+    },
     createdAt: {
         type: Date,
         default: Date.now,

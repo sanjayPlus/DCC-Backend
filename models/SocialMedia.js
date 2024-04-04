@@ -19,6 +19,12 @@ const socialMediaDetailsSchema = new mongoose.Schema({
     youtube: {
         type: String,
     },
+    whatsapp: {
+        type: String,
+    },
+    x:{
+        type: String,
+    },
     position: {
         type: String,
     } 

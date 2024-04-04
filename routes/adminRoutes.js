@@ -384,7 +384,7 @@ router.post('/add-social-media-details',socialMediaImage.single('image'),adminAu
 router.post('/add-leadership',leaderImage.single('image'),adminAuth,adminController.addLeadership);
 router.post('/update-social-media-details/:socialId/:itemId',adminAuth,socialMediaImage.single('image'),adminAuth,adminController.updateSocialMediaDetails);
 router.post('/add-developer',developerImage.single('image'),adminAuth,adminController.addDeveloper);
-router.post('/send-notification-with-district',OneImage.single('image'),adminAuth,adminController.sendNotificationWithDistrict);
+router.post('/notification-with-district',OneImage.single('image'),adminAuth,adminController.sendNotificationWithDistrict);
 router.post('/sound-cloud',soundCloud.single('sound'),adminAuth,adminController.addSoundCloud);
 
 router.delete('/user/:id',adminAuth,adminController.deleteUser);
