@@ -32,6 +32,7 @@ const Leadership = require("../models/Leadership");
 const Developer = require("../models/Developer");
 const Sound = require("../models/Sound");
 const Representatives = require("../models/Representatives");
+const Article = require("../models/Article");
 const cronExpression = '0 0 * * *';
 
 const myCronJob = cron.schedule(cronExpression, async () => {
@@ -2212,6 +2213,43 @@ const deleteRepresentatives = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const addArticle = async()=>{
+        try {
+                const { name, href, description } = req.body;
+                const imageObj = req.file;
+                const newArticle = await Article.create({
+                    name: name,
+                    href: href,
+                    description: description,
+                    image: `${process.env.DOMAIN}/articleImage/${imageObj.filename}`,
+                });
+                res.status(200).json(newArticle);
+        } catch (error) {
+            console.error("Error deleting article:", error.message);
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+}
+const getArticle = async ()=>{
+    try{
+        const article = await Article.find().sort({_id: -1});
+        res.status(200).json(article);
+    }catch(error){  
+        console.log(error);
+        res.status(500).json({error:"Internal Server Error"});
+    }
+}
+const deleteArticle = async ()=>{
+    try{
+        const article = await Article.findOneAndDelete({ _id: req.params.id });
+        if (!article) {
+            return res.status(404).json({ error: "Article not found" });
+        }
+        res.status(200).json({ msg: "Article removed" });
+    }catch(error){
+        console.error("Error deleting article:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports = {
     adminLogin,
     adminRegister,
@@ -2307,6 +2345,9 @@ module.exports = {
     getRepresentatives,
     addRepresntative,
     deleteRepresentatives,
-    
+    addArticle,
+    getArticle,
+    deleteArticle
+
 
 }
