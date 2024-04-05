@@ -473,4 +473,5 @@ router.delete('/representatives/:id', adminAuth, adminController.deleteRepresent
 router.get('/article', adminController.getArticle);
 router.post('/article', articleImage.single('image'), adminAuth, adminController.addArticle);
 router.delete('/article/:id', adminAuth, adminController.deleteArticle);
+
 module.exports = router;
