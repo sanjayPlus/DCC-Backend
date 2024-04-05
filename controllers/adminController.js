@@ -2213,7 +2213,7 @@ const deleteRepresentatives = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-const addArticle = async()=>{
+const addArticle = async(req, res)=>{
         try {
                 const { name, href, description } = req.body;
                 const imageObj = req.file;
@@ -2229,7 +2229,7 @@ const addArticle = async()=>{
             res.status(500).json({ error: "Internal Server Error" });
         }
 }
-const getArticle = async ()=>{
+const getArticle = async (req,res)=>{
     try{
         const article = await Article.find().sort({_id: -1});
         res.status(200).json(article);
@@ -2238,7 +2238,7 @@ const getArticle = async ()=>{
         res.status(500).json({error:"Internal Server Error"});
     }
 }
-const deleteArticle = async ()=>{
+const deleteArticle = async (req,res)=>{
     try{
         const article = await Article.findOneAndDelete({ _id: req.params.id });
         if (!article) {
@@ -2247,7 +2247,7 @@ const deleteArticle = async ()=>{
         res.status(200).json({ msg: "Article removed" });
     }catch(error){
         console.error("Error deleting article:", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
+        // res.status(500).json({ error: "Internal Server Error" });
     }
 }
 module.exports = {
