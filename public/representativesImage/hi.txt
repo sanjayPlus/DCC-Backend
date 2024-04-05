@@ -1,0 +1,26 @@
+const getRepresentatives = async (req, res) => {
+    try {
+        const { category } = req.query;
+        let query = {}
+        if (category) {
+            query = { category: category };
+        }
+        const representatives = await Representatives.find(query);
+        res.status(200).json(representatives);
+    } catch (error) {
+        console.error("Error deleting social media:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const deleteRepresentatives = async (req, res) => {
+    try {
+        const representatives = await Representatives.findOneAndDelete({ _id: req.params.id });
+        if (!representatives) {
+            return res.status(404).json({ error: "Representatives not found" });
+        }
+        res.status(200).json({ msg: "Representatives removed" });
+    } catch (error) {
+        console.error("Error deleting representatives:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}

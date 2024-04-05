@@ -321,6 +321,28 @@ const soundCloud = multer({
     fileSize: 20 * 1024 * 1024, // 20MB in bytes
   },
 });
+const representativeStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/representativeImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix =Date.now() + "-" + Math.round(Math.random() * 1e9);
+    //add unique suffix to the file with extension
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
+// Configure storage engine instead of dest object.
+const representativesImage = multer({
+  storage: representativeStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+});
 
 router.post('/login',adminController.adminLogin);
 router.get('/login-from-app',adminAuth,adminController.loginToVolunteer);
@@ -352,6 +374,7 @@ router.get('/get-social-media/:socialId/:itemId',adminController.getSocialMediaD
 router.get('/get-social-category',adminController.getCategorySocialMedia);
 router.get('/sound-cloud',adminController.getSoundCloud);
 router.get('/login-from-dcc',appServerAuth,adminController.LoginFromDCCAdmin);
+
 
 router.post('/gallery',galleryImage.single('image'),adminAuth,adminController.addGallery);
 router.post('/meme',memeImage.single('image'),adminAuth,adminController.addGallery);
@@ -385,8 +408,8 @@ router.post('/add-leadership',leaderImage.single('image'),adminAuth,adminControl
 router.post('/update-social-media-details/:socialId/:itemId',adminAuth,socialMediaImage.single('image'),adminAuth,adminController.updateSocialMediaDetails);
 router.post('/add-developer',developerImage.single('image'),adminAuth,adminController.addDeveloper);
 router.post('/district-notification',OneImage.single('image'),adminAuth,adminController.sendNotificationWithDistrict);
-
 router.post('/sound-cloud',soundCloud.single('sound'),adminAuth,adminController.addSoundCloud);
+
 
 router.delete('/user/:id',adminAuth,adminController.deleteUser);
 router.delete('/deleteImage/:id',adminAuth,adminController.deleteImage);
@@ -420,4 +443,7 @@ router.post('/social-media-form',adminAuth,adminController.addSocialMediaForm);
 router.get('/social-media-form',adminController.getSocialMediaForm);
 router.delete('/social-media-form/:id',adminAuth,adminController.deleteSocialMediaForm);
 
+router.post('/add-representatives',representativesImage.single('image'),adminAuth,adminController.addRepresntative);
+router.get('/add-representatives',adminController.getRepresentatives);
+router.delete('/representatives/:id',adminAuth,adminController.deleteRepresentatives);
 module.exports = router;

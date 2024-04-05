@@ -31,6 +31,7 @@ const Reels = require("../models/Reels");
 const Leadership = require("../models/Leadership");
 const Developer = require("../models/Developer");
 const Sound = require("../models/Sound");
+const Representatives = require("../models/Representatives");
 const cronExpression = '0 0 * * *';
 
 const myCronJob = cron.schedule(cronExpression, async () => {
@@ -2164,7 +2165,53 @@ const deleteSocialMediaForm= async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-
+const addRepresntative = async (req, res) => {
+    try {
+        const { name, position, address, email, phone, category, link } = req.body;
+        const imageObj = req.file;
+        const newRepresentative = await Representatives.create({
+            name: name,
+            position: position,
+            address: address,
+            email: email,
+            phone: phone,
+            image: `${process.env.DOMAIN}/representativesImage/${imageObj.filename}`,
+            category: category,
+            link: link
+        })
+        res.status(200).json(newRepresentative);
+    } catch (error) {
+        console.error("Error deleting representative:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const getRepresentatives = async (req, res) => {
+    try {
+        const { category } = req.query;
+        let query = {}
+        if (category) {
+            query = { category: category };
+        }
+        const representatives = await Representatives.find(query);
+        res.status(200).json(representatives);
+    } catch (error) {
+       
+        console.log(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const deleteRepresentatives = async (req, res) => {
+    try {
+        const representatives = await Representatives.findOneAndDelete({ _id: req.params.id });
+        if (!representatives) {
+            return res.status(404).json({ error: "Representatives not found" });
+        }
+        res.status(200).json({ msg: "Representatives removed" });
+    } catch (error) {
+        console.error("Error deleting representatives:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 module.exports = {
     adminLogin,
     adminRegister,
@@ -2257,5 +2304,9 @@ module.exports = {
     addSocialMediaForm,
     getSocialMediaForm,
     deleteSocialMediaForm,
+    getRepresentatives,
+    addRepresntative,
+    deleteRepresentatives,
+    
 
 }
