@@ -2290,6 +2290,15 @@ try{
 }
 }
 
+const totalUser = async (req, res) => {
+    try {
+        const count = await User.countDocuments(); // Use countDocuments to get the total count
+        res.json({ count });
+      } catch (error) {
+        console.error('Error fetching user count:', error);
+        res.status(500).json({ error: 'Internal server error' });
+      }
+}
 module.exports = {
     adminLogin,
     adminRegister,
@@ -2390,7 +2399,8 @@ module.exports = {
     deleteArticle,
     addHistory,
     getHistory,
-    deleteHistory
+    deleteHistory,
+    totalUser
 
 
 }

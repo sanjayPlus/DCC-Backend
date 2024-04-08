@@ -367,6 +367,31 @@ const articleImage = multer({
 
 })
 
+
+const historyStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    // destination is used to specify the path of the directory in which the files have to be stored
+    cb(null, "./public/historyImage");
+  },
+  filename: function (req, file, cb) {
+    // It is the filename that is given to the saved file.
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    //add unique suffix to the file with extension
+    cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(`${uniqueSuffix}-${file.originalname}`);
+    // console.log(file);
+  },
+});
+
+const historyImage = multer({
+  storage: historyStorage,
+  limits: {
+    fileSize: 20 * 1024 * 1024, // 20MB in bytes
+  },
+
+})
+
+
 router.post('/login', adminController.adminLogin);
 router.get('/login-from-app', adminAuth, adminController.loginToVolunteer);
 router.get('/user/:id', adminAuth, adminController.getUser);
@@ -473,5 +498,11 @@ router.delete('/representatives/:id', adminAuth, adminController.deleteRepresent
 router.get('/article', adminController.getArticle);
 router.post('/article', articleImage.single('image'), adminAuth, adminController.addArticle);
 router.delete('/article/:id', adminAuth, adminController.deleteArticle);
+
+router.post('/history', historyImage.single('image'), adminAuth, adminController.addHistory);
+router.get('/history', adminController.getHistory);
+router.delete('/history/:id', adminAuth, adminController.deleteHistory);
+
+router.get('/total-user',adminAuth, adminController.totalUser);
 
 module.exports = router;
