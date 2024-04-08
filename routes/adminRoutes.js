@@ -459,6 +459,7 @@ router.post('/district-notification', OneImage.single('image'), adminAuth, admin
 router.post('/sound-cloud', soundCloud.single('sound'), adminAuth, adminController.addSoundCloud);
 
 
+
 router.delete('/user/:id', adminAuth, adminController.deleteUser);
 router.delete('/deleteImage/:id', adminAuth, adminController.deleteImage);
 router.delete('/slogan/:id', adminAuth, adminController.deleteSlogan);
@@ -491,9 +492,11 @@ router.post('/social-media-form', adminAuth, adminController.addSocialMediaForm)
 router.get('/social-media-form', adminController.getSocialMediaForm);
 router.delete('/social-media-form/:id', adminAuth, adminController.deleteSocialMediaForm);
 
-router.post('/add-representatives', representativesImage.single('image'), adminAuth, adminController.addRepresntative);
+router.post('/add-representatives', representativesImage.single('image'), adminAuth, adminController.addRepresentative);
 router.get('/representatives', adminController.getRepresentatives);
 router.delete('/representatives/:id', adminAuth, adminController.deleteRepresentatives);
+router.post('/add-category-representative', adminAuth, adminController.addRepresntativeCategory);
+router.get('/category-representative', adminController.getCategoryRepresentatives);
 
 router.get('/article', adminController.getArticle);
 router.post('/article', articleImage.single('image'), adminAuth, adminController.addArticle);

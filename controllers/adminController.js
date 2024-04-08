@@ -2167,23 +2167,61 @@ const deleteSocialMediaForm= async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
-const addRepresntative = async (req, res) => {
+const addRepresntativeCategory = async (req, res) => {
     try {
-        const { name, position, address, email, phone, category, link } = req.body;
-        const imageObj = req.file;
-        const newRepresentative = await Representatives.create({
-            name: name,
-            position: position,
-            address: address,
-            email: email,
-            phone: phone,
-            image: `${process.env.DOMAIN}/representativesImage/${imageObj.filename}`,
-            category: category,
-            link: link
+        const { category } = req.body;
+        const newRepresentativeCategory = await Representatives.create({
+            category
         })
-        res.status(200).json(newRepresentative);
+        res.status(200).json(newRepresentativeCategory);
     } catch (error) {
         console.error("Error deleting representative:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+
+
+const addRepresentative = async (req, res) => {
+    try {
+        const { name, position, address, email, phone, link, category } = req.body;
+        const imageObj = req.file;
+
+        // First, find the category
+        const categoryObj = await Representatives.findOne({ category: category });
+
+        if (!categoryObj) {
+            return res.status(400).json({ error: "Category not found" });
+        }
+
+        // Then, add the details to the category
+        const newDetail = {
+            category: category,
+            name,
+            position,
+            address,
+            email,
+            phone,
+            image: `${process.env.DOMAIN}/representativesImage/${imageObj.filename}`,
+            link
+
+        };
+
+        categoryObj.representatives.push(newDetail);
+
+        await categoryObj.save();
+
+        res.status(200).json(categoryObj);
+    } catch (error) {
+        console.error("Error adding details to category:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const getCategoryRepresentatives = async (req, res) => {
+    try {
+        const categories = await Representatives.find({}, 'category -_id');
+        res.status(200).json(categories);
+    } catch (error) {
+        console.error("Error getting categories:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
@@ -2392,7 +2430,6 @@ module.exports = {
     getSocialMediaForm,
     deleteSocialMediaForm,
     getRepresentatives,
-    addRepresntative,
     deleteRepresentatives,
     addArticle,
     getArticle,
@@ -2400,7 +2437,9 @@ module.exports = {
     addHistory,
     getHistory,
     deleteHistory,
-    totalUser
-
+    totalUser,
+    addRepresntativeCategory,
+    addRepresentative,
+    getCategoryRepresentatives,
 
 }

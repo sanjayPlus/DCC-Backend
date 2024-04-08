@@ -19,9 +19,7 @@ const RepresentativesSchema = new mongoose.Schema({
     email: {
         type: Array,
     },
-    category:{
-        type:String,
-    },
+    
     link:{
         type:String,
     },
@@ -31,5 +29,12 @@ const RepresentativesSchema = new mongoose.Schema({
     },
 });
 
-const Representatives = mongoose.model('Representatives', RepresentativesSchema);
+const categoryRepresentativesSchema = new mongoose.Schema({
+    category: {
+        type: String,
+    },
+    representatives:[RepresentativesSchema]
+})
+
+const Representatives = mongoose.model('Representatives', categoryRepresentativesSchema);
 module.exports = Representatives;
