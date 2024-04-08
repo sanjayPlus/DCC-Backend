@@ -23,6 +23,7 @@ const VideoGallery = require("../models/VideoGallery");
 const DailyNews = require("../models/DailyNews");
 const Swing = require("../models/Swing");
 const SocialMediaForm = require("../models/SocialMediaForm");
+const History = require("../models/History");
 
 const cron = require('node-cron');
 const moment = require('moment');
@@ -2250,6 +2251,45 @@ const deleteArticle = async (req,res)=>{
         // res.status(500).json({ error: "Internal Server Error" });
     }
 }
+
+
+const addHistory = async(req, res)=>{
+    try {
+            const { title, description } = req.body;
+            const imageObj = req.file;
+            const history = await History.create({
+                title,
+                description,
+                image: `${process.env.DOMAIN}/historyImage/${imageObj.filename}`,
+            });
+            res.status(200).json(history);
+    } catch (error) {
+        console.error("Error deleting article:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
+const getHistory = async (req,res)=>{
+try{
+    const history = await History.find().sort({_id: -1});
+    res.status(200).json(history);
+}catch(error){  
+    console.log(error);
+    res.status(500).json({error:"Internal Server Error"});
+}
+}
+const deleteHistory = async (req,res)=>{
+try{
+    const history = await History.findOneAndDelete({ _id: req.params.id });
+    if (!history) {
+        return res.status(404).json({ error: "Article not found" });
+    }
+    res.status(200).json({ msg: "Article removed" });
+}catch(error){
+    console.error("Error deleting article:", error.message);
+    // res.status(500).json({ error: "Internal Server Error" });
+}
+}
+
 module.exports = {
     adminLogin,
     adminRegister,
@@ -2347,7 +2387,10 @@ module.exports = {
     deleteRepresentatives,
     addArticle,
     getArticle,
-    deleteArticle
+    deleteArticle,
+    addHistory,
+    getHistory,
+    deleteHistory
 
 
 }
