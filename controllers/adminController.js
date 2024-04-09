@@ -2242,13 +2242,20 @@ const getRepresentatives = async (req, res) => {
 }
 const deleteRepresentatives = async (req, res) => {
     try {
-        const representatives = await Representatives.findOneAndDelete({ _id: req.params.id });
-        if (!representatives) {
-            return res.status(404).json({ error: "Representatives not found" });
+        const { categoryId, representativeId } = req.params;
+        const category = await Representatives.findById(categoryId);
+        if (!category) {
+            return res.status(404).json({ error: "Category not found" });
         }
-        res.status(200).json({ msg: "Representatives removed" });
+        const representativeIndex = category.representatives.findIndex(rep => rep._id.toString() === representativeId);
+        if (representativeIndex === -1) {
+            return res.status(404).json({ error: "Representative not found in this category" });
+        }
+        category.representatives.splice(representativeIndex, 1);
+        await category.save();
+        res.status(200).json({ msg: "Representative removed from the category" });
     } catch (error) {
-        console.error("Error deleting representatives:", error.message);
+        console.error("Error deleting representative:", error.message);
         res.status(500).json({ error: "Internal Server Error" });
     }
 }

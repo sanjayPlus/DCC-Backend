@@ -494,7 +494,7 @@ router.delete('/social-media-form/:id', adminAuth, adminController.deleteSocialM
 
 router.post('/add-representatives', representativesImage.single('image'), adminAuth, adminController.addRepresentative);
 router.get('/representatives', adminController.getRepresentatives);
-router.delete('/representatives/:id', adminAuth, adminController.deleteRepresentatives);
+router.delete('/representatives/:categoryId/:representativeId', adminAuth, adminController.deleteRepresentatives);
 router.post('/add-category-representative', adminAuth, adminController.addRepresntativeCategory);
 router.get('/category-representative', adminController.getCategoryRepresentatives);
 
