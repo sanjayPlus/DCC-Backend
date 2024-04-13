@@ -2179,6 +2179,16 @@ const addRepresntativeCategory = async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
     }
 }
+const deleteRepresntativeCategory = async (req, res) => {
+    try {
+        const { category } = req.body;
+            const deletedCategory = await Representatives.findOneAndDelete({category:category})
+        res.status(200).json(deletedCategory);
+    } catch (error) {
+        console.error("Error deleting representative:", error.message);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+}
 
 
 const addRepresentative = async (req, res) => {
@@ -2448,5 +2458,5 @@ module.exports = {
     addRepresntativeCategory,
     addRepresentative,
     getCategoryRepresentatives,
-
+    deleteRepresntativeCategory
 }
