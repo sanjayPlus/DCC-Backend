@@ -497,6 +497,7 @@ router.get('/representatives', adminController.getRepresentatives);
 router.delete('/representatives/:categoryId/:representativeId', adminAuth, adminController.deleteRepresentatives);
 router.post('/add-category-representative', adminAuth, adminController.addRepresntativeCategory);
 router.get('/category-representative', adminController.getCategoryRepresentatives);
+
 router.post('/delete-category-representative',adminController.deleteRepresntativeCategory);
 
 
