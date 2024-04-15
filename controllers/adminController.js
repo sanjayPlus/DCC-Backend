@@ -2211,9 +2211,8 @@ const addRepresentative = async (req, res) => {
             address,
             email,
             phone,
-            image: `${process.env.DOMAIN}/representativesImage/${imageObj.filename}`,
+            image: `${process.env.DOMAIN}/representativeImage/${imageObj.filename}`,
             link
-
         };
 
         categoryObj.representatives.push(newDetail);
